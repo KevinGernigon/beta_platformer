@@ -38,15 +38,16 @@ class SceneOne extends Phaser.Scene{
     }
     create(){
         
-        mountainsBack = this.physics.add.sprite(1024, 447, 'mountains_back');
-        mountainsMid1 = this.physics.add.sprite(1024, 385, 'mountains_mid1');
-        mountainsMid2 = this.physics.add.sprite(1024, 482, 'mountains_mid2');
+        mountainsBack = this.add.image(1024, 447, 'mountains_back').setScrollFactor(0.3);
+        mountainsMid1 = this.add.image(1024, 385, 'mountains_mid1').setScrollFactor(0.6);
+        mountainsMid2 = this.add.image(1024, 482, 'mountains_mid2').setScrollFactor(0.9);
         
         player = this.physics.add.sprite(150, 550, 'player').setScale(0.35);
         
         swing = this.physics.add.group();
         
         projectile = this.physics.add.sprite(1000, 550, 'attaque');
+        projectile.body.setAllowGravity(false);
         //clavier
         keys = this.input.keyboard.addKeys({
             left: Phaser.Input.Keyboard.KeyCodes.LEFT,
@@ -83,7 +84,10 @@ class SceneOne extends Phaser.Scene{
                 //setTimeout(function(){flipped = false}, 5000);
             }
         }
-        
+        player.setCollideWorldBounds();
+        this.physics.world.setBounds(0, 0, 2000, 720);
+        this.cameras.main.startFollow(player);
+        this.cameras.main.setBounds(0, 0, 2000, 720);
     }
     
     update(){
@@ -95,14 +99,13 @@ class SceneOne extends Phaser.Scene{
         }
         
         if(keys.right.isDown){
-            mountainsBack.setVelocityX(-5);
-            mountainsMid1.setVelocityX(-30);
-            mountainsMid2.setVelocityX(-75); 
+            player.setVelocityX(200);
         }
-        if(keys.right.isUp){
-            mountainsBack.setVelocityX(0);
-            mountainsMid1.setVelocityX(0);
-            mountainsMid2.setVelocityX(0); 
+        if (keys.left.isDown){
+            player.setVelocityX(-200);
+        }
+        if(keys.right.isUp && keys.left.isUp){
+            player.setVelocityX(0);
         }
         if (keys.space.isDown && canSwing){
             canSwing = false;
@@ -115,4 +118,5 @@ class SceneOne extends Phaser.Scene{
 
 function attaque(x, y){
     newSwing = swing.create(player.x + x, player.y + y, 'attaque');
+    newSwing.body.setAllowGravity(false);
 }

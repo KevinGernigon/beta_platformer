@@ -1,5 +1,9 @@
 var player;
 
+var ennemy; 
+var ennemyATire = false;
+
+
 var keys;
 var gamepad;
 var paddle;
@@ -15,7 +19,8 @@ var newSwing;
 var canSwing = true;
 
 var projectile;
-var projectileSpeed = -100;
+var newProjectile;
+var projectileSpeed = -150;
 var flipped = false;
 
 class SceneOne extends Phaser.Scene{
@@ -34,6 +39,8 @@ class SceneOne extends Phaser.Scene{
         this.load.image('player', 'assets/player_placeholdere.png');
         
         this.load.image('attaque', 'assets/tile_green.jpg');
+        
+        this.load.image('ennemy', 'assets/ennemy.png');
 
     }
     create(){
@@ -43,11 +50,15 @@ class SceneOne extends Phaser.Scene{
         mountainsMid2 = this.add.image(1024, 482, 'mountains_mid2').setScrollFactor(0.9);
         
         player = this.physics.add.sprite(150, 550, 'player').setScale(0.35);
+        ennemy = this.physics.add.sprite(1100, 550, 'ennemy').setScale(0.1);
         
         swing = this.physics.add.group();
         
-        projectile = this.physics.add.sprite(1000, 550, 'attaque');
-        projectile.body.setAllowGravity(false);
+        projectile = this.physics.add.group();
+        
+        //projectile = this.physics.add.sprite(1000, 550, 'attaque');
+        //projectile.body.setAllowGravity(false);
+        
         //clavier
         keys = this.input.keyboard.addKeys({
             left: Phaser.Input.Keyboard.KeyCodes.LEFT,
@@ -85,6 +96,7 @@ class SceneOne extends Phaser.Scene{
             }
         }
         player.setCollideWorldBounds();
+        ennemy.setCollideWorldBounds();
         this.physics.world.setBounds(0, 0, 2000, 720);
         this.cameras.main.startFollow(player);
         this.cameras.main.setBounds(0, 0, 2000, 720);
@@ -98,25 +110,69 @@ class SceneOne extends Phaser.Scene{
             projectile.setVelocityX(projectileSpeed * (-2))
         }
         
-        if(keys.right.isDown){
+        if(keys.right.isDown && keys.space.isUp){
             player.setVelocityX(200);
         }
-        if (keys.left.isDown){
+        if (keys.left.isDown && keys.space.isUp){
             player.setVelocityX(-200);
         }
         if(keys.right.isUp && keys.left.isUp){
             player.setVelocityX(0);
         }
-        if (keys.space.isDown && canSwing){
+        if (keys.space.isDown && keys.right.isDown && canSwing){
+            player.setVelocityX(0);
             canSwing = false;
             attaque(100,0);
             setTimeout(function(){canSwing = true}, 1000);
             setTimeout(function(){newSwing.destroy()}, 500);
         }
+        if (keys.space.isDown && keys.left.isDown && canSwing){
+            player.setVelocityX(0);
+            canSwing = false;
+            attaque(-100,0);
+            setTimeout(function(){canSwing = true}, 1000);
+            setTimeout(function(){newSwing.destroy()}, 500);
+        }
+        
+
+        if (ennemy.x > player.x && ennemy.x >= 500){
+            ennemy.setVelocityX(-100);
+            if (ennemyATire == false && ennemy.x - player.x > 200){
+                ennemyATire = true;
+                if (projectileSpeed > 0){
+                    projectileSpeed = -150;
+                }
+                tirEnnemi(-30, 0, projectileSpeed);
+                setTimeout(function(){ennemyATire = false}, 4000);
+            }
+        }
+        else if (ennemy.x < player.x && ennemy.x <= 1200){
+            ennemy.setVelocityX(100);
+            if (ennemyATire == false && player.x - ennemy.x > 200){
+                ennemyATire = true;
+                if (projectileSpeed < 0){
+                    projectileSpeed = 150;
+                }
+                tirEnnemi(30, -20, projectileSpeed * -1)
+                setTimeout(function(){ennemyATire = false}, 4000);
+            }
+        }
+        else {
+            ennemy.setVelocityX(0);
+        }
+        
+        
+        
     }
 }
 
 function attaque(x, y){
     newSwing = swing.create(player.x + x, player.y + y, 'attaque');
     newSwing.body.setAllowGravity(false);
+}
+
+function tirEnnemi(x, y, velocity){
+    newProjectile = projectile.create(ennemy.x + x, ennemy.y + y, 'attaque');
+    newProjectile.body.setAllowGravity(false);
+    newProjectile.setVelocityX(velocity);
 }

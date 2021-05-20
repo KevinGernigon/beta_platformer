@@ -23,6 +23,10 @@ var newProjectile;
 var projectileSpeed = -150;
 var flipped = false;
 
+
+//var combo_1 = false;
+//var combo_2 = false;
+
 class SceneOne extends Phaser.Scene{
     constructor(){
         super("sceneOne");
@@ -45,6 +49,10 @@ class SceneOne extends Phaser.Scene{
     }
     create(){
         
+        
+           
+
+           
         mountainsBack = this.add.image(1024, 447, 'mountains_back').setScrollFactor(0.3);
         mountainsMid1 = this.add.image(1024, 385, 'mountains_mid1').setScrollFactor(0.6);
         mountainsMid2 = this.add.image(1024, 482, 'mountains_mid2').setScrollFactor(0.9);
@@ -67,7 +75,9 @@ class SceneOne extends Phaser.Scene{
             down: Phaser.Input.Keyboard.KeyCodes.DOWN,
             space: Phaser.Input.Keyboard.KeyCodes.SPACE,
             shift: Phaser.Input.Keyboard.KeyCodes.SHIFT,
-            escape : Phaser.Input.Keyboard.KeyCodes.ESC
+            escape : Phaser.Input.Keyboard.KeyCodes.ESC,
+            A: Phaser.Input.Keyboard.KeyCodes.A,
+            E: Phaser.Input.Keyboard.KeyCodes.E
         });
         
         //manette
@@ -103,6 +113,32 @@ class SceneOne extends Phaser.Scene{
     }
     
     update(){
+        
+        //test keycombos
+        /*if(combo_1 == false && keys.A.isDown){
+            combo_1 = true;
+            this.keybombo1 = this.input.keyboard.createCombo('BCD');
+        }
+        
+        if (combo_2 == false && keys.E.isDown){
+            combo_2 = true;
+            this.keybombo2 = this.input.keyboard.createCombo('ERT');
+        }
+
+        this.input.keyboard.on('keycombomatch', function (event) {
+          if (combo_1 == true) {
+              console.log('combo_1');
+              combo_1 = false;
+              
+          } else if (combo_2 == true) {
+              console.log('combo_2');
+              combo_2 = false;
+              
+          }*/
+        
+        
+        //});
+        
         if (flipped == false){
             projectile.setVelocityX(projectileSpeed);
         }
@@ -134,14 +170,18 @@ class SceneOne extends Phaser.Scene{
             setTimeout(function(){newSwing.destroy()}, 500);
         }
         
+        
+        if (ennemy.x > player.x){
+            projectileSpeed = -150;
+        }
+        else if (ennemy.x < player.x){
+            projectileSpeed = 150;
+        }
 
         if (ennemy.x > player.x && ennemy.x >= 500){
             ennemy.setVelocityX(-100);
             if (ennemyATire == false && ennemy.x - player.x > 200){
                 ennemyATire = true;
-                if (projectileSpeed > 0){
-                    projectileSpeed = -150;
-                }
                 tirEnnemi(-30, 0, projectileSpeed);
                 setTimeout(function(){ennemyATire = false}, 4000);
             }
@@ -150,9 +190,6 @@ class SceneOne extends Phaser.Scene{
             ennemy.setVelocityX(100);
             if (ennemyATire == false && player.x - ennemy.x > 200){
                 ennemyATire = true;
-                if (projectileSpeed < 0){
-                    projectileSpeed = 150;
-                }
                 tirEnnemi(30, -20, projectileSpeed * -1)
                 setTimeout(function(){ennemyATire = false}, 4000);
             }

@@ -20,7 +20,10 @@ var canSwing = true;
 
 var projectile;
 var newProjectile;
-var projectileSpeed = -150;
+var tirEnJeu = false;
+var tirToDestroy;
+var projectileLeftSpeed = -150;
+var projectileRightSpeed = 150;
 var flipped = false;
 
 
@@ -58,7 +61,7 @@ class SceneOne extends Phaser.Scene{
         mountainsMid2 = this.add.image(1024, 482, 'mountains_mid2').setScrollFactor(0.9);
         
         player = this.physics.add.sprite(150, 550, 'player').setScale(0.35);
-        ennemy = this.physics.add.sprite(1100, 550, 'ennemy').setScale(0.1);
+        ennemy = this.physics.add.sprite(1100, 600, 'ennemy').setScale(0.1);
         
         swing = this.physics.add.group();
         
@@ -93,17 +96,23 @@ class SceneOne extends Phaser.Scene{
         
         //colliders & overlaps
         this.physics.add.collider(player, projectile, hitOnPlayer, null, this);
-        this.physics.add.overlap(swing, projectile, renvoiProjectile, null, this);
+        this.physics.add.overlap(projectile, swing, renvoiProjectile, null, this);
         
         function hitOnPlayer(player, projectile){
             player.setTint(0xff0000);
         }
         
-        function renvoiProjectile(swing, projectile){
-            if (flipped == false){
-                flipped = true;
+        function renvoiProjectile(projectile, swing){
+            //if (flipped == false){
+                //flipped = true;
+                if (ennemy.x > player.x){
+                    projectile.setVelocityX(projectileRightSpeed);
+                }
+                else if (ennemy.x < player.x){
+                    projectile.setVelocityX(projectileLeftSpeed);
+                }
                 //setTimeout(function(){flipped = false}, 5000);
-            }
+            //}
         }
         player.setCollideWorldBounds();
         ennemy.setCollideWorldBounds();
@@ -114,7 +123,7 @@ class SceneOne extends Phaser.Scene{
     
     update(){
         
-        //test keycombos
+        //test keycombos pour Tibs//
         /*if(combo_1 == false && keys.A.isDown){
             combo_1 = true;
             this.keybombo1 = this.input.keyboard.createCombo('BCD');
@@ -134,17 +143,9 @@ class SceneOne extends Phaser.Scene{
               console.log('combo_2');
               combo_2 = false;
               
-          }*/
+          }
+        });*/
         
-        
-        //});
-        
-        if (flipped == false){
-            projectile.setVelocityX(projectileSpeed);
-        }
-        else if (flipped == true){
-            projectile.setVelocityX(projectileSpeed * (-2))
-        }
         
         if(keys.right.isDown && keys.space.isUp){
             player.setVelocityX(200);
@@ -171,18 +172,12 @@ class SceneOne extends Phaser.Scene{
         }
         
         
-        if (ennemy.x > player.x){
-            projectileSpeed = -150;
-        }
-        else if (ennemy.x < player.x){
-            projectileSpeed = 150;
-        }
 
         if (ennemy.x > player.x && ennemy.x >= 500){
             ennemy.setVelocityX(-100);
             if (ennemyATire == false && ennemy.x - player.x > 200){
                 ennemyATire = true;
-                tirEnnemi(-30, 0, projectileSpeed);
+                tirEnnemi(-30, -30, projectileLeftSpeed);
                 setTimeout(function(){ennemyATire = false}, 4000);
             }
         }
@@ -190,7 +185,7 @@ class SceneOne extends Phaser.Scene{
             ennemy.setVelocityX(100);
             if (ennemyATire == false && player.x - ennemy.x > 200){
                 ennemyATire = true;
-                tirEnnemi(30, -20, projectileSpeed * -1)
+                tirEnnemi(30, -30, projectileRightSpeed)
                 setTimeout(function(){ennemyATire = false}, 4000);
             }
         }
@@ -212,4 +207,7 @@ function tirEnnemi(x, y, velocity){
     newProjectile = projectile.create(ennemy.x + x, ennemy.y + y, 'attaque');
     newProjectile.body.setAllowGravity(false);
     newProjectile.setVelocityX(velocity);
+    setTimeout(function(){tirToDestroy = projectile.getFirstAlive(false)}, 5000);
+    setTimeout(function(){tirToDestroy.destroy()}, 5000);
+    tirEnJeu = true;
 }

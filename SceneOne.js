@@ -60,8 +60,8 @@ class SceneOne extends Phaser.Scene{
         mountainsMid1 = this.add.image(1024, 385, 'mountains_mid1').setScrollFactor(0.6);
         mountainsMid2 = this.add.image(1024, 482, 'mountains_mid2').setScrollFactor(0.9);
         
-        player = this.physics.add.sprite(150, 550, 'player').setScale(0.35);
-        ennemy = this.physics.add.sprite(1100, 600, 'ennemy').setScale(0.1);
+        player = this.physics.add.sprite(100, 400, 'player').setScale(0.35);
+        ennemy = this.physics.add.sprite(600, 400, 'ennemy').setScale(0.1);
         
         swing = this.physics.add.group();
         

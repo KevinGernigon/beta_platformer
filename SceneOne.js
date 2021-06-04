@@ -10,10 +10,6 @@ var paddle;
 var padConnected;
 var pad;
 
-var mountainsBack;
-var mountainsMid1;
-var mountainsMid2;
-
 var swing;
 var newSwing;
 var canSwing = true;
@@ -38,10 +34,13 @@ class SceneOne extends Phaser.Scene{
     init(data){
     }
     preload(){
-        //calques parallax
-        this.load.image('mountains_back', 'assets/mountains_back.png');
-        this.load.image('mountains_mid1', 'assets/mountains_mid1.png');
-        this.load.image('mountains_mid2', 'assets/mountains_mid2.png');
+        
+        this.load.image('arbres_front', 'assets/foreground.png');
+        this.load.image('arbres_mid', 'assets/midfront.png');
+        this.load.image('arbres_back', 'assets/background_arbres.png');
+        this.load.image('background', 'assets/background.jpg');
+        
+        this.load.image('village_gobelin', 'assets/village_gobelin.png');
         
         this.load.image('player', 'assets/player_placeholdere.png');
         
@@ -51,17 +50,31 @@ class SceneOne extends Phaser.Scene{
 
     }
     create(){
+            
+        this.add.image(448, 224, 'background').setScrollFactor(0.3); 
+        this.add.image(1344, 224, 'background').setScrollFactor(0.3);
+        this.add.image(2240, 224, 'background').setScrollFactor(0.3);
         
         
-           
-
-           
-        mountainsBack = this.add.image(1024, 447, 'mountains_back').setScrollFactor(0.3);
-        mountainsMid1 = this.add.image(1024, 385, 'mountains_mid1').setScrollFactor(0.6);
-        mountainsMid2 = this.add.image(1024, 482, 'mountains_mid2').setScrollFactor(0.9);
+        this.add.image(448, 224, 'arbres_back').setScrollFactor(0.3);   
+        this.add.image(1344, 224, 'arbres_back').setScrollFactor(0.3); 
+        this.add.image(2240, 224, 'arbres_back').setScrollFactor(0.3); 
+        
+        
+        this.add.image(448, 224, 'arbres_mid').setScrollFactor(0.6);
+        this.add.image(1344, 224, 'arbres_mid').setScrollFactor(0.6);
+        this.add.image(2240, 224, 'arbres_mid').setScrollFactor(0.6);
+        
+        
+        this.add.image(448, 224, 'arbres_front').setScrollFactor(0.9); 
+        this.add.image(1344, 224, 'arbres_front').setScrollFactor(0.9); 
+        this.add.image(2240, 224, 'arbres_front').setScrollFactor(0.9); 
+        
+        this.add.image(3136, 224, 'village_gobelin');
+        
         
         player = this.physics.add.sprite(100, 400, 'player').setScale(0.35);
-        ennemy = this.physics.add.sprite(600, 400, 'ennemy').setScale(0.1);
+        ennemy = this.physics.add.sprite(3250, 400, 'ennemy').setScale(0.3);
         
         swing = this.physics.add.group();
         
@@ -116,9 +129,9 @@ class SceneOne extends Phaser.Scene{
         }
         player.setCollideWorldBounds();
         ennemy.setCollideWorldBounds();
-        this.physics.world.setBounds(0, 0, 2000, 720);
+        this.physics.world.setBounds(0, 0, 3564, 448);
         this.cameras.main.startFollow(player);
-        this.cameras.main.setBounds(0, 0, 2000, 720);
+        this.cameras.main.setBounds(0, 0, 3564, 448);
     }
     
     update(){
@@ -173,7 +186,7 @@ class SceneOne extends Phaser.Scene{
         
         
 
-        if (ennemy.x > player.x && ennemy.x >= 500){
+        if (ennemy.x > player.x && ennemy.x >= 3100){
             ennemy.setVelocityX(-100);
             if (ennemyATire == false && ennemy.x - player.x > 200){
                 ennemyATire = true;
@@ -181,7 +194,7 @@ class SceneOne extends Phaser.Scene{
                 setTimeout(function(){ennemyATire = false}, 4000);
             }
         }
-        else if (ennemy.x < player.x && ennemy.x <= 1200){
+        else if (ennemy.x < player.x && ennemy.x <= 3584){
             ennemy.setVelocityX(100);
             if (ennemyATire == false && player.x - ennemy.x > 200){
                 ennemyATire = true;
@@ -207,7 +220,7 @@ function tirEnnemi(x, y, velocity){
     newProjectile = projectile.create(ennemy.x + x, ennemy.y + y, 'attaque');
     newProjectile.body.setAllowGravity(false);
     newProjectile.setVelocityX(velocity);
-    setTimeout(function(){tirToDestroy = projectile.getFirstAlive(false)}, 5000);
-    setTimeout(function(){tirToDestroy.destroy()}, 5000);
+    setTimeout(function(){tirToDestroy = projectile.getFirstAlive(false)}, 7000);
+    setTimeout(function(){tirToDestroy.destroy()}, 7000);
     tirEnJeu = true;
 }

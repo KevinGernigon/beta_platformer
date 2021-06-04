@@ -5,6 +5,7 @@
     <title>Placeholder</title>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.54.0/dist/phaser.js"></script>
     <script src="SceneOne.js"></script>
+    <script src="EcranTitre.js"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -30,7 +31,7 @@ var config = {
             debug: true
         }
     },
-    scene: [SceneOne]
+    scene: [EcranTitre,SceneOne]
 };
 
 var game = new Phaser.Game(config);

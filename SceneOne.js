@@ -2,9 +2,11 @@ var player;
 
 var ennemy; 
 var ennemyATire = false;
-
+var leopard;
 
 var keys;
+var left;
+var right;
 var gamepad;
 var paddle;
 var padConnected;
@@ -42,7 +44,9 @@ class SceneOne extends Phaser.Scene{
         
         this.load.image('village_gobelin', 'assets/village_gobelin.png');
         
-        this.load.image('player', 'assets/player_placeholdere.png');
+        //this.load.image('player', 'assets/player_placeholdere.png');
+        this.load.spritesheet('player', 'assets/spritesheets/spritesheet_joueur.png', {frameWidth: 524,frameHeight: 552});
+        this.load.spritesheet('leopard', 'assets/spritesheets/spritesheet_leopard.png', {frameWidth: 472, frameHeight: 223});
         
         this.load.image('attaque', 'assets/tile_green.jpg');
         
@@ -74,6 +78,7 @@ class SceneOne extends Phaser.Scene{
         
         
         player = this.physics.add.sprite(100, 400, 'player').setScale(0.35);
+        
         ennemy = this.physics.add.sprite(3250, 400, 'ennemy').setScale(0.3);
         
         swing = this.physics.add.group();
@@ -85,8 +90,8 @@ class SceneOne extends Phaser.Scene{
         
         //clavier
         keys = this.input.keyboard.addKeys({
-            left: Phaser.Input.Keyboard.KeyCodes.LEFT,
-            right: Phaser.Input.Keyboard.KeyCodes.RIGHT,
+            kleft: Phaser.Input.Keyboard.KeyCodes.LEFT,
+            kright: Phaser.Input.Keyboard.KeyCodes.RIGHT,
             up : Phaser.Input.Keyboard.KeyCodes.UP,
             down: Phaser.Input.Keyboard.KeyCodes.DOWN,
             space: Phaser.Input.Keyboard.KeyCodes.SPACE,
@@ -95,6 +100,9 @@ class SceneOne extends Phaser.Scene{
             A: Phaser.Input.Keyboard.KeyCodes.A,
             E: Phaser.Input.Keyboard.KeyCodes.E
         });
+        
+        left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+        right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
         
         //manette
         if (this.input.gamepad.total === 0){
@@ -132,6 +140,45 @@ class SceneOne extends Phaser.Scene{
         this.physics.world.setBounds(0, 0, 3564, 448);
         this.cameras.main.startFollow(player);
         this.cameras.main.setBounds(0, 0, 3564, 448);
+        
+        
+        //anims//
+        this.anims.create({
+            key: 'idle_right',
+            frames: this.anims.generateFrameNumbers('player', {start: 0, end: 0}),
+            frameRate: 6,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('player', {start: 1, end: 4}),
+            frameRate: 6,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'baseball_right',
+            frames: this.anims.generateFrameNumbers('player', {start: 5, end: 12}),
+            frameRate: 6,
+            repeat: 0
+        });
+        this.anims.create({
+            key: 'idle_left',
+            frames: this.anims.generateFrameNumbers('player', {start: 13, end: 13}),
+            frameRate: 6,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('player', {start: 14, end: 17}),
+            frameRate: 6,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'baseball_left',
+            frames: this.anims.generateFrameNumbers('player', {start: 18, end: 25}),
+            frameRate: 6,
+            repeat: 0
+        });
     }
     
     update(){
@@ -160,30 +207,43 @@ class SceneOne extends Phaser.Scene{
         });*/
         
         
-        if(keys.right.isDown && keys.space.isUp){
+        if(keys.kright.isDown && keys.space.isUp && canSwing == true){
+            player.anims.play('right', true);
             player.setVelocityX(200);
         }
-        if (keys.left.isDown && keys.space.isUp){
+        else if (keys.kleft.isDown && keys.space.isUp && canSwing == true){
+            player.anims.play('left', true);
             player.setVelocityX(-200);
         }
-        if(keys.right.isUp && keys.left.isUp){
+        /*if(keys.right.isUp && keys.left.isUp && canSwing == true){
+            player.anims.play('idle_right', true);
             player.setVelocityX(0);
-        }
-        if (keys.space.isDown && keys.right.isDown && canSwing){
+        }*/
+        else if (keys.space.isDown && keys.kright.isDown && canSwing){
+            player.anims.play('baseball_right', true);
             player.setVelocityX(0);
             canSwing = false;
             attaque(100,0);
-            setTimeout(function(){canSwing = true}, 1000);
-            setTimeout(function(){newSwing.destroy()}, 500);
+            setTimeout(function(){canSwing = true}, 1500);
+            setTimeout(function(){newSwing.destroy()}, 1500);
         }
-        if (keys.space.isDown && keys.left.isDown && canSwing){
+        else if (keys.space.isDown && keys.kleft.isDown && canSwing){
+            player.anims.play('baseball_left', true);
             player.setVelocityX(0);
             canSwing = false;
             attaque(-100,0);
-            setTimeout(function(){canSwing = true}, 1000);
-            setTimeout(function(){newSwing.destroy()}, 500);
+            setTimeout(function(){canSwing = true}, 1500);
+            setTimeout(function(){newSwing.destroy()}, 1500);
+        }
+        else if (canSwing == true && Phaser.Input.Keyboard.JustUp(left)){
+            player.anims.play('idle_left', true);
+            player.setVelocityX(0);
         }
         
+        else if (canSwing == true && Phaser.Input.Keyboard.JustUp(right)){
+            player.anims.play('idle_right', true);
+            player.setVelocityX(0);
+        }
         
 
         if (ennemy.x > player.x && ennemy.x >= 3100){
@@ -212,8 +272,10 @@ class SceneOne extends Phaser.Scene{
 }
 
 function attaque(x, y){
+    setTimeout(function(){
     newSwing = swing.create(player.x + x, player.y + y, 'attaque');
     newSwing.body.setAllowGravity(false);
+    }, 1000);
 }
 
 function tirEnnemi(x, y, velocity){

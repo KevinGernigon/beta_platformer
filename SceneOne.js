@@ -3,6 +3,7 @@ var player;
 var ennemy; 
 var ennemyATire = false;
 var leopard;
+var leopard_mort = false;
 
 var keys;
 var left;
@@ -23,6 +24,9 @@ var tirToDestroy;
 var projectileLeftSpeed = -150;
 var projectileRightSpeed = 150;
 var flipped = false;
+
+var invincible = false;
+var pv_player = 5;
 
 
 //var combo_1 = false;
@@ -77,7 +81,11 @@ class SceneOne extends Phaser.Scene{
         this.add.image(3136, 224, 'village_gobelin');
         
         
-        player = this.physics.add.sprite(100, 400, 'player').setScale(0.35);
+        player = this.physics.add.sprite(100, 300, 'player').setScale(0.35);
+        player.setSize(250, 400);
+        player.setOffset(190, 140);
+        
+        leopard = this.physics.add.sprite(1000, 300, 'leopard').setScale(0.4);
         
         ennemy = this.physics.add.sprite(3250, 400, 'ennemy').setScale(0.3);
         
@@ -118,6 +126,31 @@ class SceneOne extends Phaser.Scene{
         //colliders & overlaps
         this.physics.add.collider(player, projectile, hitOnPlayer, null, this);
         this.physics.add.overlap(projectile, swing, renvoiProjectile, null, this);
+        this.physics.add.overlap(leopard, swing, killLeopard, null, this);
+        this.physics.add.overlap(player, leopard, perdPv, null, this);
+        
+        function perdPv(player, leopard){
+            if (invincible == false && pv_player >= 0){
+                invincible = true;
+                pv_player -= 1;
+                player.setAlpha(0);
+                setTimeout(function(){player.setAlpha(1)}, 200);
+                setTimeout(function(){player.setAlpha(0)}, 400);
+                setTimeout(function(){player.setAlpha(1)}, 600);
+                setTimeout(function(){player.setAlpha(0)}, 800);
+                setTimeout(function(){player.setAlpha(1)}, 1000);
+                setTimeout(function(){player.setAlpha(0)}, 1200);
+                setTimeout(function(){player.setAlpha(1)}, 1400);
+                setTimeout(function(){player.setAlpha(0)}, 1600);
+                setTimeout(function(){player.setAlpha(1)}, 1800);
+                setTimeout(function(){invincible = false}, 2400);
+            }
+        }
+        
+        function killLeopard(leopard, swing){
+            leopard_mort = true;
+            leopard.destroy();
+        }
         
         function hitOnPlayer(player, projectile){
             player.setTint(0xff0000);
@@ -137,6 +170,7 @@ class SceneOne extends Phaser.Scene{
         }
         player.setCollideWorldBounds();
         ennemy.setCollideWorldBounds();
+        leopard.setCollideWorldBounds();
         this.physics.world.setBounds(0, 0, 3564, 448);
         this.cameras.main.startFollow(player);
         this.cameras.main.setBounds(0, 0, 3564, 448);
@@ -179,10 +213,40 @@ class SceneOne extends Phaser.Scene{
             frameRate: 6,
             repeat: 0
         });
+        
+        this.anims.create({
+            key: 'leopard_left',
+            frames: this.anims.generateFrameNumbers('leopard', {start: 0, end: 5}),
+            frameRate: 6,
+            repeat: -1
+        });
+        
+        this.anims.create({
+            key: 'leopard_right',
+            frames: this.anims.generateFrameNumbers('leopard', {start: 6, end: 11}),
+            frameRate: 6,
+            repeat: -1
+        });
+        
+        this.anims.create({
+            key: 'leopard_idle_right',
+            frames: this.anims.generateFrameNumbers('leopard', {start: 0, end: 0}),
+            repeat: -1
+        });
+        
+        this.anims.create({
+            key: 'leopard_idle_left',
+            frames: this.anims.generateFrameNumbers('leopard', {start: 6, end: 6}),
+            repeat: -1
+        });
     }
     
     update(){
         
+        if (pv_player <= 0){
+            player.setTint(0xff0000);
+            this.physics.pause();
+        }
         //test keycombos pour Tibs//
         /*if(combo_1 == false && keys.A.isDown){
             combo_1 = true;
@@ -266,8 +330,27 @@ class SceneOne extends Phaser.Scene{
             ennemy.setVelocityX(0);
         }
         
-        
-        
+        if (leopard_mort == false){
+            if (leopard.x - player.x <= 600 && leopard.x - player.x >= 150){
+                leopard.setVelocityX(-200);
+                leopard.anims.play('leopard_left', true);
+            }
+
+            else if (player.x - leopard.x <= 600 && player.x - leopard.x >= 150){
+                leopard.setVelocityX(200);
+                leopard.anims.play('leopard_right', true);
+            }
+            else {
+                leopard.setVelocityX(0);
+            }
+        }
+        /*if (leopard.body.velocity.x == 0 && leopard.x - player.x > 0){
+            leopard.anims.play('leopard_idle_right');
+        }
+        else if (leopard.body.velocity.x == 0 && player.x - leopard.x > 0){
+            leopard.anims.play('leopard_idle_left');
+        }*/
+            
     }
 }
 

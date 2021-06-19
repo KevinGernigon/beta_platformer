@@ -338,7 +338,7 @@ class SceneOne extends Phaser.Scene{
         this.anims.create({
             key: 'baseball_right',
             frames: this.anims.generateFrameNumbers('player', {start: 5, end: 12}),
-            frameRate: 6,
+            frameRate: 10,
             repeat: 0
         });
         this.anims.create({
@@ -356,7 +356,7 @@ class SceneOne extends Phaser.Scene{
         this.anims.create({
             key: 'baseball_left',
             frames: this.anims.generateFrameNumbers('player', {start: 18, end: 25}),
-            frameRate: 6,
+            frameRate: 10,
             repeat: 0
         });
         
@@ -607,10 +607,10 @@ class SceneOne extends Phaser.Scene{
     
         
         
-        /*if (fireAttackUsed == false){
+        if (fireAttackUsed == false){
             fireAttackUsed = true;
             fireAttack();
-        }*/
+        }
         
         if (pv_player <= 0){
             player.setTint(0xff0000);
@@ -701,7 +701,7 @@ function attaque(x, y){
     setTimeout(function(){
     newSwing = swing.create(player.x + x, player.y + y, 'attaque');
     newSwing.body.setAllowGravity(false);
-    }, 1000);
+    }, 500);
 }
 
 function tirEnnemi(x, y, velocity){
@@ -713,7 +713,7 @@ function tirEnnemi(x, y, velocity){
     tirEnJeu = true;
 }
 
-function fireAttack(){
+/*function fireAttack(){
     new_flamme1 = flamme_1.create(600, 350, 'flamme_1');
     new_flamme1.body.setAllowGravity(false);
     setTimeout(function(){
@@ -744,4 +744,4 @@ function fireAttack(){
     setTimeout(function(){
         new_flamme6.destroy();
     }, 1200);
-}
+}*/

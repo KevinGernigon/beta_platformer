@@ -1,6 +1,29 @@
 var background_boss;
 var boss;
 
+var fouet_1;
+var fouet_2;
+var fouet_3;
+var fouet_4;
+var fouet_5;
+var new_fouet_1;
+var new_fouet_2;
+var new_fouet_3;
+var new_fouet_4;
+var new_fouet_5;
+
+var fireball;
+var new_fireball;
+var fireball_tiree = false;
+
+var phase_1 = false;
+var phase_2 = false;
+var phase_3 = false;
+
+var whiped = false;
+
+var pv_boss = 10;
+
 class SceneTwo extends Phaser.Scene{
     constructor(){
         super("sceneTwo");
@@ -9,7 +32,12 @@ class SceneTwo extends Phaser.Scene{
     init(data){
     }
     preload(){
-        
+        this.load.image('fouet_1', 'assets/fouet_1.png');
+        this.load.image('fouet_2', 'assets/fouet_2.png');
+        this.load.image('fouet_3', 'assets/fouet_3.png');
+        this.load.image('fouet_4', 'assets/fouet_4.png');
+        this.load.image('fouet_5', 'assets/fouet_5.png');
+        this.load.image('fireball', 'assets/fireball.png');
     }
     create(){
         
@@ -77,10 +105,286 @@ class SceneTwo extends Phaser.Scene{
         flamme_5 = this.physics.add.group();
         flamme_6 = this.physics.add.group();
         
+        fouet_1 = this.physics.add.group();
+        fouet_2 = this.physics.add.group();
+        fouet_3 = this.physics.add.group();
+        fouet_4 = this.physics.add.group();
+        fouet_5 = this.physics.add.group();
+        
+        fireball = this.physics.add.group();
+        
         player.setCollideWorldBounds();
         boss.setCollideWorldBounds();
+        
+        this.physics.add.overlap(fireball, swing, renvoiFireball, null, this);
+        this.physics.add.collider(player, fireball, hitFlamme, null, this);
+        this.physics.add.collider(boss, fireball, hitFlammeBoss, null, this);
+        this.physics.add.overlap(player, fouet_1, hitBossFouet_1, null, this);
+        this.physics.add.overlap(player, fouet_2, hitBossFouet_2, null, this);
+        this.physics.add.overlap(player, fouet_3, hitBossFouet_3, null, this);
+        this.physics.add.overlap(player, fouet_4, hitBossFouet_4, null, this);
+        this.physics.add.overlap(player, fouet_5, hitBossFouet_5, null, this);
+        this.physics.add.overlap(player, flamme_1, hitBossFlamme_1, null, this);
+        this.physics.add.overlap(player, flamme_2, hitBossFlamme_2, null, this);
+        this.physics.add.overlap(player, flamme_3, hitBossFlamme_3, null, this);
+        this.physics.add.overlap(player, flamme_4, hitBossFlamme_4, null, this);
+        this.physics.add.overlap(player, flamme_5, hitBossFlamme_5, null, this);
+        this.physics.add.overlap(player, boss, hitBoss, null, this);
+        
+        function renvoiFireball(fireball, swing){
+            //if (flipped == false){
+                //flipped = true;
+                if (boss.x > player.x){
+                    fireball.setVelocityX(projectileRightSpeed);
+                }
+                else if (boss.x < player.x){
+                    fireball.setVelocityX(projectileLeftSpeed);
+                }
+                //setTimeout(function(){flipped = false}, 5000);
+            //}
+        }
+        
+        function hitFlamme(player, fireball){
+            if (invincible == false && pv_player >= 0){
+                invincible = true;
+                pv_player -= 1;
+                player.setAlpha(0);
+                setTimeout(function(){player.setAlpha(1)}, 200);
+                setTimeout(function(){player.setAlpha(0)}, 400);
+                setTimeout(function(){player.setAlpha(1)}, 600);
+                setTimeout(function(){player.setAlpha(0)}, 800);
+                setTimeout(function(){player.setAlpha(1)}, 1000);
+                setTimeout(function(){player.setAlpha(0)}, 1200);
+                setTimeout(function(){player.setAlpha(1)}, 1400);
+                setTimeout(function(){player.setAlpha(0)}, 1600);
+                setTimeout(function(){player.setAlpha(1)}, 1800);
+                setTimeout(function(){invincible = false}, 2400);
+            }
+            fireball.destroy();
+        }
+        function hitFlammeBoss(boss, fireball){
+            if (pv_boss >= 0){
+                pv_boss -= 1;
+                boss.setAlpha(0);
+                setTimeout(function(){boss.setAlpha(1)}, 200);
+                setTimeout(function(){boss.setAlpha(0)}, 400);
+                setTimeout(function(){boss.setAlpha(1)}, 600);
+                setTimeout(function(){boss.setAlpha(0)}, 800);
+                setTimeout(function(){boss.setAlpha(1)}, 1000);
+                setTimeout(function(){boss.setAlpha(0)}, 1200);
+                setTimeout(function(){boss.setAlpha(1)}, 1400);
+                setTimeout(function(){boss.setAlpha(0)}, 1600);
+                setTimeout(function(){boss.setAlpha(1)}, 1800);
+            }
+            fireball.destroy();
+        }
+        function hitBossFouet_1(player, fouet_1){
+            if (invincible == false && pv_player >= 0){
+                invincible = true;
+                pv_player -= 1;
+                player.setAlpha(0);
+                setTimeout(function(){player.setAlpha(1)}, 200);
+                setTimeout(function(){player.setAlpha(0)}, 400);
+                setTimeout(function(){player.setAlpha(1)}, 600);
+                setTimeout(function(){player.setAlpha(0)}, 800);
+                setTimeout(function(){player.setAlpha(1)}, 1000);
+                setTimeout(function(){player.setAlpha(0)}, 1200);
+                setTimeout(function(){player.setAlpha(1)}, 1400);
+                setTimeout(function(){player.setAlpha(0)}, 1600);
+                setTimeout(function(){player.setAlpha(1)}, 1800);
+                setTimeout(function(){invincible = false}, 2400);
+            }
+        }
+        function hitBossFouet_2(player, fouet_2){
+            if (invincible == false && pv_player >= 0){
+                invincible = true;
+                pv_player -= 1;
+                player.setAlpha(0);
+                setTimeout(function(){player.setAlpha(1)}, 200);
+                setTimeout(function(){player.setAlpha(0)}, 400);
+                setTimeout(function(){player.setAlpha(1)}, 600);
+                setTimeout(function(){player.setAlpha(0)}, 800);
+                setTimeout(function(){player.setAlpha(1)}, 1000);
+                setTimeout(function(){player.setAlpha(0)}, 1200);
+                setTimeout(function(){player.setAlpha(1)}, 1400);
+                setTimeout(function(){player.setAlpha(0)}, 1600);
+                setTimeout(function(){player.setAlpha(1)}, 1800);
+                setTimeout(function(){invincible = false}, 2400);
+            }
+        }
+        function hitBossFouet_3(player, fouet_3){
+            if (invincible == false && pv_player >= 0){
+                invincible = true;
+                pv_player -= 1;
+                player.setAlpha(0);
+                setTimeout(function(){player.setAlpha(1)}, 200);
+                setTimeout(function(){player.setAlpha(0)}, 400);
+                setTimeout(function(){player.setAlpha(1)}, 600);
+                setTimeout(function(){player.setAlpha(0)}, 800);
+                setTimeout(function(){player.setAlpha(1)}, 1000);
+                setTimeout(function(){player.setAlpha(0)}, 1200);
+                setTimeout(function(){player.setAlpha(1)}, 1400);
+                setTimeout(function(){player.setAlpha(0)}, 1600);
+                setTimeout(function(){player.setAlpha(1)}, 1800);
+                setTimeout(function(){invincible = false}, 2400);
+            }
+        }
+        function hitBossFouet_4(player, fouet_4){
+            if (invincible == false && pv_player >= 0){
+                invincible = true;
+                pv_player -= 1;
+                player.setAlpha(0);
+                setTimeout(function(){player.setAlpha(1)}, 200);
+                setTimeout(function(){player.setAlpha(0)}, 400);
+                setTimeout(function(){player.setAlpha(1)}, 600);
+                setTimeout(function(){player.setAlpha(0)}, 800);
+                setTimeout(function(){player.setAlpha(1)}, 1000);
+                setTimeout(function(){player.setAlpha(0)}, 1200);
+                setTimeout(function(){player.setAlpha(1)}, 1400);
+                setTimeout(function(){player.setAlpha(0)}, 1600);
+                setTimeout(function(){player.setAlpha(1)}, 1800);
+                setTimeout(function(){invincible = false}, 2400);
+            }
+        }
+        function hitBossFouet_5(player, fouet_5){
+            if (invincible == false && pv_player >= 0){
+                invincible = true;
+                pv_player -= 1;
+                player.setAlpha(0);
+                setTimeout(function(){player.setAlpha(1)}, 200);
+                setTimeout(function(){player.setAlpha(0)}, 400);
+                setTimeout(function(){player.setAlpha(1)}, 600);
+                setTimeout(function(){player.setAlpha(0)}, 800);
+                setTimeout(function(){player.setAlpha(1)}, 1000);
+                setTimeout(function(){player.setAlpha(0)}, 1200);
+                setTimeout(function(){player.setAlpha(1)}, 1400);
+                setTimeout(function(){player.setAlpha(0)}, 1600);
+                setTimeout(function(){player.setAlpha(1)}, 1800);
+                setTimeout(function(){invincible = false}, 2400);
+            }
+        }
+        function hitBossFlamme_1(player, flamme_1){
+            if (invincible == false && pv_player >= 0){
+                invincible = true;
+                pv_player -= 1;
+                player.setAlpha(0);
+                setTimeout(function(){player.setAlpha(1)}, 200);
+                setTimeout(function(){player.setAlpha(0)}, 400);
+                setTimeout(function(){player.setAlpha(1)}, 600);
+                setTimeout(function(){player.setAlpha(0)}, 800);
+                setTimeout(function(){player.setAlpha(1)}, 1000);
+                setTimeout(function(){player.setAlpha(0)}, 1200);
+                setTimeout(function(){player.setAlpha(1)}, 1400);
+                setTimeout(function(){player.setAlpha(0)}, 1600);
+                setTimeout(function(){player.setAlpha(1)}, 1800);
+                setTimeout(function(){invincible = false}, 2400);
+            }
+        }
+        function hitBossFlamme_2(player, flamme_2){
+            if (invincible == false && pv_player >= 0){
+                invincible = true;
+                pv_player -= 1;
+                player.setAlpha(0);
+                setTimeout(function(){player.setAlpha(1)}, 200);
+                setTimeout(function(){player.setAlpha(0)}, 400);
+                setTimeout(function(){player.setAlpha(1)}, 600);
+                setTimeout(function(){player.setAlpha(0)}, 800);
+                setTimeout(function(){player.setAlpha(1)}, 1000);
+                setTimeout(function(){player.setAlpha(0)}, 1200);
+                setTimeout(function(){player.setAlpha(1)}, 1400);
+                setTimeout(function(){player.setAlpha(0)}, 1600);
+                setTimeout(function(){player.setAlpha(1)}, 1800);
+                setTimeout(function(){invincible = false}, 2400);
+            }
+        }
+        function hitBossFlamme_3(player, flamme_3){
+            if (invincible == false && pv_player >= 0){
+                invincible = true;
+                pv_player -= 1;
+                player.setAlpha(0);
+                setTimeout(function(){player.setAlpha(1)}, 200);
+                setTimeout(function(){player.setAlpha(0)}, 400);
+                setTimeout(function(){player.setAlpha(1)}, 600);
+                setTimeout(function(){player.setAlpha(0)}, 800);
+                setTimeout(function(){player.setAlpha(1)}, 1000);
+                setTimeout(function(){player.setAlpha(0)}, 1200);
+                setTimeout(function(){player.setAlpha(1)}, 1400);
+                setTimeout(function(){player.setAlpha(0)}, 1600);
+                setTimeout(function(){player.setAlpha(1)}, 1800);
+                setTimeout(function(){invincible = false}, 2400);
+            }
+        }
+        function hitBossFlamme_4(player, flamme_4){
+            if (invincible == false && pv_player >= 0){
+                invincible = true;
+                pv_player -= 1;
+                player.setAlpha(0);
+                setTimeout(function(){player.setAlpha(1)}, 200);
+                setTimeout(function(){player.setAlpha(0)}, 400);
+                setTimeout(function(){player.setAlpha(1)}, 600);
+                setTimeout(function(){player.setAlpha(0)}, 800);
+                setTimeout(function(){player.setAlpha(1)}, 1000);
+                setTimeout(function(){player.setAlpha(0)}, 1200);
+                setTimeout(function(){player.setAlpha(1)}, 1400);
+                setTimeout(function(){player.setAlpha(0)}, 1600);
+                setTimeout(function(){player.setAlpha(1)}, 1800);
+                setTimeout(function(){invincible = false}, 2400);
+            }
+        }
+        function hitBossFlamme_5(player, flamme_5){
+            if (invincible == false && pv_player >= 0){
+                invincible = true;
+                pv_player -= 1;
+                player.setAlpha(0);
+                setTimeout(function(){player.setAlpha(1)}, 200);
+                setTimeout(function(){player.setAlpha(0)}, 400);
+                setTimeout(function(){player.setAlpha(1)}, 600);
+                setTimeout(function(){player.setAlpha(0)}, 800);
+                setTimeout(function(){player.setAlpha(1)}, 1000);
+                setTimeout(function(){player.setAlpha(0)}, 1200);
+                setTimeout(function(){player.setAlpha(1)}, 1400);
+                setTimeout(function(){player.setAlpha(0)}, 1600);
+                setTimeout(function(){player.setAlpha(1)}, 1800);
+                setTimeout(function(){invincible = false}, 2400);
+            }
+        }
+        function hitBoss(player, boss){
+            if (invincible == false && pv_player >= 0){
+                invincible = true;
+                pv_player -= 1;
+                player.setAlpha(0);
+                setTimeout(function(){player.setAlpha(1)}, 200);
+                setTimeout(function(){player.setAlpha(0)}, 400);
+                setTimeout(function(){player.setAlpha(1)}, 600);
+                setTimeout(function(){player.setAlpha(0)}, 800);
+                setTimeout(function(){player.setAlpha(1)}, 1000);
+                setTimeout(function(){player.setAlpha(0)}, 1200);
+                setTimeout(function(){player.setAlpha(1)}, 1400);
+                setTimeout(function(){player.setAlpha(0)}, 1600);
+                setTimeout(function(){player.setAlpha(1)}, 1800);
+                setTimeout(function(){invincible = false}, 2400);
+            }
+        }
     }
     update(){
+        
+        if (phase_1 == true && phase_2 == false && phase_3 == false && fireball_tiree == false){
+            fireball_tiree = true
+            new_fireball = fireball.create(boss.x - 250, boss.y + 100, 'fireball');
+            new_fireball.setVelocityX(-150);
+            new_fireball.body.setAllowGravity(false);
+            setTimeout(function(){
+                fireball_tiree = false;
+            }, 3000);
+        }
+        /*if (whiped == false){
+            whiped = true;
+            whipAttack();
+            setTimeout(function(){
+                whiped = false;
+            }, 2000);
+        }*/
+        
         if(pv_player == 5){
             heart_full_1.setVisible(true);
             heart_full_2.setVisible(true);
@@ -226,12 +530,12 @@ class SceneTwo extends Phaser.Scene{
     }
 }
 
-function attaque(x, y){
+/*function attaque(x, y){
     setTimeout(function(){
     newSwing = swing.create(player.x + x, player.y + y, 'attaque');
     newSwing.body.setAllowGravity(false);
-    }, 1000);
-}
+    }, 4000);
+}*/
 
 function fireAttack(){
     new_flamme1 = flamme_1.create(600, 350, 'flamme_1');
@@ -264,4 +568,37 @@ function fireAttack(){
     setTimeout(function(){
         new_flamme6.destroy();
     }, 1200);
+}
+
+function whipAttack(){
+    new_fouet_1 = fouet_1.create(580, 30, 'fouet_1');
+    new_fouet_1.setScale(0.7);
+    new_fouet_1.body.setAllowGravity(false);
+    setTimeout(function(){
+        new_fouet_1.destroy();
+        new_fouet_2 = fouet_2.create(600, 30, 'fouet_2');
+        new_fouet_2.setScale(0.7);
+        new_fouet_2.body.setAllowGravity(false);
+    }, 200);
+    setTimeout(function(){
+        new_fouet_2.destroy();
+        new_fouet_3 = fouet_3.create(500, 100, 'fouet_3');
+        new_fouet_3.setScale(0.7);
+        new_fouet_3.body.setAllowGravity(false);
+    }, 400);
+    setTimeout(function(){
+        new_fouet_3.destroy();
+        new_fouet_4 = fouet_4.create(400, 200, 'fouet_4');
+        new_fouet_4.setScale(0.7);
+        new_fouet_4.body.setAllowGravity(false);
+    }, 600);
+    setTimeout(function(){
+        new_fouet_4.destroy();
+        new_fouet_5 = fouet_5.create(350, 400, 'fouet_5');
+        new_fouet_5.setScale(0.7);
+        new_fouet_5.body.setAllowGravity(false);
+    }, 800);
+    setTimeout(function(){
+        new_fouet_5.destroy();
+    }, 1000);
 }

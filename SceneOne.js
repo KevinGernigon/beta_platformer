@@ -138,6 +138,9 @@ var en_pause = false;
 
 var theme_foret;
 
+var souche;
+var tronc;
+
 class SceneOne extends Phaser.Scene{
     constructor(){
         super("sceneOne");
@@ -208,6 +211,10 @@ class SceneOne extends Phaser.Scene{
         this.load.audio('fouet', 'audio/getATasteOfMyPower.mp3');
         this.load.audio('flamewall', 'audio/RiseFromTheGround.mp3');
         this.load.audio('theme_boss', 'audio/theme_boss.mp3');
+        
+        //obstacles//
+        this.load.image('souche', 'assets/souche.png');
+        this.load.image('tronc', 'assets/tronc.png');
 
     }
     create(){
@@ -256,6 +263,31 @@ class SceneOne extends Phaser.Scene{
         loot_caillou_4 = this.add.sprite(2500, 400, 'loot_caillou');
         loot_caillou_5 = this.add.sprite(2800, 400, 'loot_caillou');
         
+        souche = this.physics.add.group();
+        tronc = this.physics.add.group();
+        
+        var souche_1 = souche.create(230, 400, 'souche').setImmovable().setScale(0.5);
+        souche_1.body.setAllowGravity(false);
+        souche_1.setSize(200, 100);
+        
+        var souche_2 = souche.create(2500, 400, 'souche').setImmovable().setScale(0.5);
+        souche_2.body.setAllowGravity(false);
+        souche_2.setSize(200, 100);
+        
+        var souche_3 = souche.create(1800, 400, 'souche').setImmovable().setScale(0.5);
+        souche_3.body.setAllowGravity(false);
+        souche_3.setSize(200, 100);
+        
+        var tronc_1 = tronc.create(1000, 410, 'tronc').setImmovable().setScale(0.7);
+        tronc_1.body.setAllowGravity(false);
+        tronc_1.setSize(500, 40);
+        tronc_1.setOffset(0, 30);
+        
+        var tronc_2 = tronc.create(3050, 410, 'tronc').setImmovable().setScale(0.7);
+        tronc_2.body.setAllowGravity(false);
+        tronc_2.setSize(500, 40);
+        tronc_2.setOffset(0, 30);
+        
         player = this.physics.add.sprite(100, 300, 'player').setScale(0.35);
         player.setSize(250, 400);
         player.setOffset(190, 140);
@@ -267,6 +299,9 @@ class SceneOne extends Phaser.Scene{
         ennemy_arbre.setOffset(30, 0);
         
         ennemy_serpent = this.physics.add.sprite(2600, 300, 'ennemi_serpent').setScale(0.7);
+        
+        
+        
         
         //ennemy = this.physics.add.sprite(3450, 400, 'ennemy');
         
@@ -306,6 +341,12 @@ class SceneOne extends Phaser.Scene{
         }
         
         //colliders & overlaps
+        this.physics.add.collider(player, souche);
+        this.physics.add.collider(player, tronc);
+        this.physics.add.collider(leopard, souche);
+        this.physics.add.collider(leopard, tronc);
+        this.physics.add.collider(ennemy_arbre, souche);
+        this.physics.add.collider(ennemy_arbre, tronc);
         this.physics.add.collider(player, projectile, hitOnPlayer, null, this);
         this.physics.add.collider(ennemy_arbre, projectile, hitOnArbre, null, this);
         this.physics.add.overlap(player, ennemy_arbre, perdPvArbre, null, this);
@@ -1071,7 +1112,7 @@ class SceneOne extends Phaser.Scene{
                 if(ennemy_arbre_a_tire == false){
                     ennemy_arbre_a_tire = true;
                     ennemy_arbre.anims.play('arbre_attack_left', true);
-                    tirEnnemi(-150, 0, projectileLeftSpeed);
+                    tirEnnemi(-110, 0, projectileLeftSpeed);
                     setTimeout(function(){ennemy_arbre.anims.play('arbre_left', true)}, 1000);
                     setTimeout(function(){ennemy_arbre_a_tire = false}, 4000);
                 }
@@ -1081,10 +1122,22 @@ class SceneOne extends Phaser.Scene{
                 if(ennemy_arbre_a_tire == false){
                     ennemy_arbre_a_tire = true;
                     ennemy_arbre.anims.play('arbre_attack_right', true);
-                    tirEnnemi(150, 0, projectileRightSpeed);
+                    tirEnnemi(110, 0, projectileRightSpeed);
                     setTimeout(function(){ennemy_arbre.anims.play('arbre_right', true)}, 1000);
                     setTimeout(function(){ennemy_arbre_a_tire = false}, 4000);
                 }
+            }
+            if (ennemy_arbre.body.blocked.left){
+                ennemy_arbre.setVelocityY(-120);
+                setTimeout(function(){
+                    ennemy_arbre.setVelocityY(0);
+                }, 1000);
+            }
+            if (ennemy_arbre.body.blocked.right){
+                ennemy_arbre.setVelocityY(120);
+                setTimeout(function(){
+                    ennemy_arbre.setVelocityY(0);
+                }, 1000);
             }
         }
         

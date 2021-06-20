@@ -682,7 +682,7 @@ class SceneTwo extends Phaser.Scene{
             if (phase_1 == true && phase_2 == false && phase_3 == false && fireball_tiree == false && pv_player > 0 && pv_boss > 0){
                 son_fireball.play();
                 fireball_tiree = true
-                new_fireball = fireball.create(boss.x - 250, boss.y + 100, 'fireball');
+                new_fireball = fireball.create(boss.x - 220, boss.y + 100, 'fireball');
                 new_fireball.setVelocityX(-150);
                 new_fireball.body.setAllowGravity(false);
                 setTimeout(function(){
@@ -694,7 +694,7 @@ class SceneTwo extends Phaser.Scene{
                 spell_used = true;
                 if (numero_spell == 0){
                     son_fireball.play();
-                    new_fireball = fireball.create(boss.x - 250, boss.y + 100, 'fireball');
+                    new_fireball = fireball.create(boss.x - 220, boss.y + 100, 'fireball');
                     new_fireball.setVelocityX(-150);
                     new_fireball.body.setAllowGravity(false);
                     setTimeout(function(){
@@ -716,7 +716,7 @@ class SceneTwo extends Phaser.Scene{
                 spell_used = true;
                 if (numero_spell_2 == 0){
                     son_fireball.play();
-                    new_fireball = fireball.create(boss.x - 250, boss.y + 100, 'fireball');
+                    new_fireball = fireball.create(boss.x - 220, boss.y + 100, 'fireball');
                     new_fireball.setVelocityX(-150);
                     new_fireball.body.setAllowGravity(false);
                     setTimeout(function(){

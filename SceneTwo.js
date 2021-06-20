@@ -32,7 +32,8 @@ var pv_boss = 10;
 //bruitages boss//
 var son_fireball;
 var son_fouet;
-var son_flamewall
+var son_flamewall;
+var theme_boss;
 
 class SceneTwo extends Phaser.Scene{
     constructor(){
@@ -53,10 +54,13 @@ class SceneTwo extends Phaser.Scene{
         this.load.audio('fireball', 'audio/fireball.mp3');
         this.load.audio('fouet', 'audio/getATasteOfMyPower.mp3');
         this.load.audio('flamewall', 'audio/RiseFromTheGround.mp3');
+        this.load.audio('theme_boss', 'audio/theme_boss.mp3');
     }
     create(){
         
         //bruitages boss//
+        theme_boss = this.sound.add('theme_boss', {volume: 0.7});
+        theme_boss.play();
         son_fireball = this.sound.add('fireball');
         son_fouet = this.sound.add('fouet');
         son_flamewall = this.sound.add('flamewall');
@@ -491,7 +495,7 @@ class SceneTwo extends Phaser.Scene{
                 son_flamewall.play();
                 setTimeout(function(){
                     fireAttack();
-                }, 1000);
+                }, 1500);
                 setTimeout(function(){
                     spell_used = false;
                 }, 4000);

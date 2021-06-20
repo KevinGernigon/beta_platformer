@@ -9,6 +9,18 @@ var pv_leopard = 2;
 var leopard_invincible = false;
 var leopard_mort = false;
 
+var ennemy_arbre;
+var pv_arbre = 8;
+var ennemy_arbre_invincible = false;
+var ennemy_arbre_a_tire = false;
+var ennemy_arbre_mort = false;
+
+var ennemy_serpent;
+var pv_serpent = 5;
+var ennemy_serpent_mort = false;
+var ennemy_serpent_invincible = false;
+var ennemy_serpent_mort = false;
+
 var keys;
 var left;
 var right;
@@ -26,8 +38,8 @@ var projectile;
 var newProjectile;
 var tirEnJeu = false;
 var tirToDestroy;
-var projectileLeftSpeed = -150;
-var projectileRightSpeed = 150;
+var projectileLeftSpeed = -80;
+var projectileRightSpeed = 80;
 var flipped = false;
 
 var invincible = false;
@@ -71,15 +83,45 @@ var gameStarted = false;
 
 //loot//
 var loot_branche_1;
+var loot_branche_1_ramassee = false;
+var ramassage_loot_branche_1 = false;
+
 var loot_caillou_1;
+var loot_caillou_1_ramassee = false;
+var ramassage_loot_caillou_1 = false;
+
 var loot_branche_2;
+var loot_branche_2_ramassee = false;
+var ramassage_loot_branche_2 = false;
+
 var loot_caillou_2;
+var loot_caillou_2_ramassee = false;
+var ramassage_loot_caillou_2 = false;
+
 var loot_branche_3;
+var loot_branche_3_ramassee = false;
+var ramassage_loot_branche_3 = false;
+
 var loot_caillou_3;
+var loot_caillou_3_ramassee = false;
+var ramassage_loot_caillou_3 = false;
+
 var loot_branche_4;
+var loot_branche_4_ramassee = false;
+var ramassage_loot_branche_4 = false;
+
 var loot_caillou_4;
+var loot_caillou_4_ramassee = false;
+var ramassage_loot_caillou_4 = false;
+
 var loot_branche_5;
+var loot_branche_5_ramassee = false;
+var ramassage_loot_branche_5 = false;
+
 var loot_caillou_5;
+var loot_caillou_5_ramassee = false;
+var ramassage_loot_caillou_5 = false;
+
 var loot_heart;
 var new_heart;
 
@@ -121,7 +163,7 @@ class SceneOne extends Phaser.Scene{
         this.load.spritesheet('player', 'assets/spritesheets/spritesheet_joueur.png', {frameWidth: 524,frameHeight: 552});
         this.load.spritesheet('leopard', 'assets/spritesheets/spritesheet_leopard.png', {frameWidth: 472, frameHeight: 223});
         
-        this.load.image('attaque', 'assets/tile_green.jpg');
+        this.load.image('attaque', 'assets/hitbox_swing.png');
         
         this.load.image('ennemy', 'assets/rakshaja.png');
         
@@ -142,6 +184,7 @@ class SceneOne extends Phaser.Scene{
         
         //ennemis//
         this.load.spritesheet('ennemi_arbre', 'assets/spritesheets/spritesheet_ennemi_arbre.png',{frameWidth: 214, frameHeight: 270});
+        this.load.image('projectile_pollen', 'assets/projectile_pollen.png');
         this.load.spritesheet('ennemi_serpent', 'assets/spritesheets/spritesheet_serpent.png',{frameWidth: 127, frameHeight: 137});
         
         //loot//
@@ -159,10 +202,6 @@ class SceneOne extends Phaser.Scene{
 
     }
     create(){
-            
-        
-        
-        
         this.add.image(448, 224, 'background').setScrollFactor(0.3); 
         this.add.image(1344, 224, 'background').setScrollFactor(0.3);
         this.add.image(2240, 224, 'background').setScrollFactor(0.3);
@@ -192,12 +231,29 @@ class SceneOne extends Phaser.Scene{
         //this.add.image(4388, 224, 'village_gobelin');
         
         loot_heart = this.physics.add.group();
+        loot_branche_1 = this.add.sprite(400, 400, 'loot_branche');
+        loot_branche_2 = this.add.sprite(1000, 400, 'loot_branche');
+        loot_branche_3 = this.add.sprite(1900, 400, 'loot_branche');
+        loot_branche_4 = this.add.sprite(2200, 400, 'loot_branche');
+        loot_branche_5 = this.add.sprite(3100, 400, 'loot_branche');
+        
+        loot_caillou_1 = this.add.sprite(700, 400, 'loot_caillou');
+        loot_caillou_2 = this.add.sprite(1300, 400, 'loot_caillou');
+        loot_caillou_3 = this.add.sprite(1600, 400, 'loot_caillou');
+        loot_caillou_4 = this.add.sprite(2500, 400, 'loot_caillou');
+        loot_caillou_5 = this.add.sprite(2800, 400, 'loot_caillou');
         
         player = this.physics.add.sprite(100, 300, 'player').setScale(0.35);
         player.setSize(250, 400);
         player.setOffset(190, 140);
         
         leopard = this.physics.add.sprite(1000, 300, 'leopard').setScale(0.4);
+        
+        ennemy_arbre = this.physics.add.sprite(2000, 220, 'ennemi_arbre').setScale(0.8);
+        ennemy_arbre.setSize(170, 260);
+        ennemy_arbre.setOffset(30, 0);
+        
+        ennemy_serpent = this.physics.add.sprite(2600, 300, 'ennemi_serpent').setScale(0.7);
         
         //ennemy = this.physics.add.sprite(3450, 400, 'ennemy');
         
@@ -217,6 +273,7 @@ class SceneOne extends Phaser.Scene{
             space: Phaser.Input.Keyboard.KeyCodes.SPACE,
             shift: Phaser.Input.Keyboard.KeyCodes.SHIFT,
             escape : Phaser.Input.Keyboard.KeyCodes.ESC,
+            enter : Phaser.Input.Keyboard.KeyCodes.ENTER,
             A: Phaser.Input.Keyboard.KeyCodes.A,
             E: Phaser.Input.Keyboard.KeyCodes.E
         });
@@ -237,14 +294,130 @@ class SceneOne extends Phaser.Scene{
         
         //colliders & overlaps
         this.physics.add.collider(player, projectile, hitOnPlayer, null, this);
+        this.physics.add.collider(ennemy_arbre, projectile, hitOnArbre, null, this);
+        this.physics.add.overlap(player, ennemy_arbre, perdPvArbre, null, this);
+        this.physics.add.overlap(ennemy_arbre, swing, killArbre, null, this);
+        this.physics.add.overlap(player, ennemy_serpent, perdPvSerpent, null, this);
+        this.physics.add.overlap(ennemy_serpent, swing, killSerpent, null, this);
         this.physics.add.overlap(projectile, swing, renvoiProjectile, null, this);
         this.physics.add.overlap(leopard, swing, killLeopard, null, this);
         this.physics.add.overlap(player, leopard, perdPv, null, this);
         this.physics.add.overlap(player, loot_heart, restaurePV, null, this);
         
+        function perdPvSerpent(player, ennemy_serpent){
+            if (invincible == false && pv_player >= 0){
+                invincible = true;
+                pv_player -= 1;
+                player.setAlpha(0);
+                setTimeout(function(){player.setAlpha(1)}, 200);
+                setTimeout(function(){player.setAlpha(0)}, 400);
+                setTimeout(function(){player.setAlpha(1)}, 600);
+                setTimeout(function(){player.setAlpha(0)}, 800);
+                setTimeout(function(){player.setAlpha(1)}, 1000);
+                setTimeout(function(){player.setAlpha(0)}, 1200);
+                setTimeout(function(){player.setAlpha(1)}, 1400);
+                setTimeout(function(){player.setAlpha(0)}, 1600);
+                setTimeout(function(){player.setAlpha(1)}, 1800);
+                setTimeout(function(){invincible = false}, 2400);
+            }
+        }
+        
+        function killSerpent(ennemy_serpent, swing){
+            if(!ennemy_serpent_invincible){
+                ennemy_serpent_invincible = true;
+                pv_serpent -= degats_swing;
+                ennemy_serpent.setAlpha(0);
+                setTimeout(function(){ennemy_serpent.setAlpha(1)}, 200);
+                setTimeout(function(){ennemy_serpent.setAlpha(0)}, 400);
+                setTimeout(function(){ennemy_serpent.setAlpha(1)}, 600);
+                setTimeout(function(){ennemy_serpent.setAlpha(0)}, 800);
+                setTimeout(function(){ennemy_serpent.setAlpha(1)}, 1000);
+                setTimeout(function(){ennemy_serpent.setAlpha(0)}, 1200);
+                setTimeout(function(){ennemy_serpent.setAlpha(1)}, 1400);
+                setTimeout(function(){ennemy_serpent.setAlpha(0)}, 1600);
+                setTimeout(function(){ennemy_serpent.setAlpha(1)}, 1800);
+                setTimeout(function(){ennemy_serpent_invincible = false}, 2400);
+            }
+            if (pv_serpent <= 0){
+                ennemy_serpent_mort = true;
+                ennemy_serpent.destroy();
+                new_heart = loot_heart.create(ennemy_serpent.x, ennemy_serpent.y - 20, 'heart_full');
+                new_heart.body.setAllowGravity(false);
+            }
+        }
+        
+        function perdPvArbre(player, ennemy_arbre){
+            if (invincible == false && pv_player >= 0){
+                invincible = true;
+                pv_player -= 1;
+                player.setAlpha(0);
+                setTimeout(function(){player.setAlpha(1)}, 200);
+                setTimeout(function(){player.setAlpha(0)}, 400);
+                setTimeout(function(){player.setAlpha(1)}, 600);
+                setTimeout(function(){player.setAlpha(0)}, 800);
+                setTimeout(function(){player.setAlpha(1)}, 1000);
+                setTimeout(function(){player.setAlpha(0)}, 1200);
+                setTimeout(function(){player.setAlpha(1)}, 1400);
+                setTimeout(function(){player.setAlpha(0)}, 1600);
+                setTimeout(function(){player.setAlpha(1)}, 1800);
+                setTimeout(function(){invincible = false}, 2400);
+            }
+        }
+        
+        function killArbre(ennemy_arbre, swing){
+            if(!ennemy_arbre_invincible){
+                ennemy_arbre_invincible = true;
+                pv_arbre -= degats_swing;
+                ennemy_arbre.setAlpha(0);
+                setTimeout(function(){ennemy_arbre.setAlpha(1)}, 200);
+                setTimeout(function(){ennemy_arbre.setAlpha(0)}, 400);
+                setTimeout(function(){ennemy_arbre.setAlpha(1)}, 600);
+                setTimeout(function(){ennemy_arbre.setAlpha(0)}, 800);
+                setTimeout(function(){ennemy_arbre.setAlpha(1)}, 1000);
+                setTimeout(function(){ennemy_arbre.setAlpha(0)}, 1200);
+                setTimeout(function(){ennemy_arbre.setAlpha(1)}, 1400);
+                setTimeout(function(){ennemy_arbre.setAlpha(0)}, 1600);
+                setTimeout(function(){ennemy_arbre.setAlpha(1)}, 1800);
+                setTimeout(function(){ennemy_arbre_invincible = false}, 2400);
+            }
+            if (pv_arbre <= 0){
+                ennemy_arbre_mort = true;
+                ennemy_arbre.destroy();
+                new_heart = loot_heart.create(ennemy_arbre.x, ennemy_arbre.y - 50, 'heart_full');
+                new_heart.body.setAllowGravity(false);
+            }
+        }
+        
+        function hitOnArbre(ennemy_arbre, projectile){
+            if (ennemy_arbre_invincible == false){
+                ennemy_arbre_invincible = true;
+                pv_arbre -= 1;
+                ennemy_arbre.setAlpha(0);
+                setTimeout(function(){ennemy_arbre.setAlpha(1)}, 200);
+                setTimeout(function(){ennemy_arbre.setAlpha(0)}, 400);
+                setTimeout(function(){ennemy_arbre.setAlpha(1)}, 600);
+                setTimeout(function(){ennemy_arbre.setAlpha(0)}, 800);
+                setTimeout(function(){ennemy_arbre.setAlpha(1)}, 1000);
+                setTimeout(function(){ennemy_arbre.setAlpha(0)}, 1200);
+                setTimeout(function(){ennemy_arbre.setAlpha(1)}, 1400);
+                setTimeout(function(){ennemy_arbre.setAlpha(0)}, 1600);
+                setTimeout(function(){ennemy_arbre.setAlpha(1)}, 1800);
+                setTimeout(function(){ennemy_arbre_invincible = false}, 2400);
+            }
+            projectile.destroy();
+            if (pv_arbre <= 0){
+                ennemy_arbre_mort = true;
+                ennemy_arbre.destroy();
+                new_heart = loot_heart.create(ennemy_arbre.x, ennemy_arbre.y - 50, 'heart_full');
+                new_heart.body.setAllowGravity(false);
+            }
+        }
+        
         function restaurePV(player, loot_heart){
-            loot_heart.destroy();
-            pv_player += 1;
+            if (pv_player < 5){
+                loot_heart.destroy();
+                pv_player += 1;
+            }
         }
         
         function perdPv(player, leopard){
@@ -291,16 +464,31 @@ class SceneOne extends Phaser.Scene{
         
         
         function hitOnPlayer(player, projectile){
-            player.setTint(0xff0000);
+            if (invincible == false && pv_player >= 0){
+                invincible = true;
+                pv_player -= 1;
+                player.setAlpha(0);
+                setTimeout(function(){player.setAlpha(1)}, 200);
+                setTimeout(function(){player.setAlpha(0)}, 400);
+                setTimeout(function(){player.setAlpha(1)}, 600);
+                setTimeout(function(){player.setAlpha(0)}, 800);
+                setTimeout(function(){player.setAlpha(1)}, 1000);
+                setTimeout(function(){player.setAlpha(0)}, 1200);
+                setTimeout(function(){player.setAlpha(1)}, 1400);
+                setTimeout(function(){player.setAlpha(0)}, 1600);
+                setTimeout(function(){player.setAlpha(1)}, 1800);
+                setTimeout(function(){invincible = false}, 2400);
+            }
+            projectile.destroy();
         }
         
         function renvoiProjectile(projectile, swing){
             //if (flipped == false){
                 //flipped = true;
-                if (ennemy.x > player.x){
+                if (ennemy_arbre.x > player.x){
                     projectile.setVelocityX(projectileRightSpeed);
                 }
-                else if (ennemy.x < player.x){
+                else if (ennemy_arbre.x < player.x){
                     projectile.setVelocityX(projectileLeftSpeed);
                 }
                 //setTimeout(function(){flipped = false}, 5000);
@@ -317,6 +505,9 @@ class SceneOne extends Phaser.Scene{
         player.setCollideWorldBounds();
         //ennemy.setCollideWorldBounds();
         leopard.setCollideWorldBounds();
+        ennemy_arbre.setCollideWorldBounds();
+        ennemy_serpent.setCollideWorldBounds();
+        
         this.physics.world.setBounds(0, 0, 3940, 448);
         this.cameras.main.startFollow(player);
         this.cameras.main.setBounds(0, 0, 3940, 448);
@@ -408,8 +599,40 @@ class SceneOne extends Phaser.Scene{
             repeat: -1
         });
         
-        loot_branche_1 = this.add.sprite(400, 400, 'loot_branche').setInteractive();
-        loot_branche_1.on('pointerover', function(){
+        this.anims.create({
+            key: 'arbre_left',
+            frames: this.anims.generateFrameNumbers('ennemi_arbre', {start: 0, end: 0}),
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'arbre_attack_left',
+            frames: this.anims.generateFrameNumbers('ennemi_arbre', {start: 1, end: 1}),
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'arbre_right',
+            frames: this.anims.generateFrameNumbers('ennemi_arbre', {start: 2, end: 2}),
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'arbre_attack_right',
+            frames: this.anims.generateFrameNumbers('ennemi_arbre', {start: 3, end: 3}),
+            repeat: -1
+        });
+        
+        this.anims.create({
+            key: 'serpent_left',
+            frames: this.anims.generateFrameNumbers('ennemi_serpent', {start: 0, end: 0}),
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'serpent_right',
+            frames: this.anims.generateFrameNumbers('ennemi_serpent', {start: 1, end: 1}),
+            repeat: -1
+        });
+        
+        
+        /*loot_branche_1.on('pointerover', function(){
             loot_branche_1.anims.play('branche_on', true);
         });
         loot_branche_1.on('pointerout', function(){
@@ -419,7 +642,7 @@ class SceneOne extends Phaser.Scene{
             loot_branche_1.destroy();
             poids_inventaire += 1;
             degats_swing += 1;
-        })
+        });*/
     
         heart_full_1 = this.add.image(30, 40, 'heart_full').setScrollFactor(0);
         heart_empty_1 = this.add.image(30, 40, 'heart_empty').setVisible(false).setScrollFactor(0);
@@ -472,6 +695,146 @@ class SceneOne extends Phaser.Scene{
         });
 }
     update(){
+        
+        if (gameStarted == false){
+            if (keys.enter.isDown){
+                bd_1.destroy();
+                gameStarted = true;
+            }
+        }
+        
+        //loot branches//
+        if (player.x > 300 && player.x < 450 && loot_branche_1_ramassee == false){
+            loot_branche_1_ramassee = true;
+            loot_branche_1.anims.play('branche_on', true);
+        }
+        if (loot_branche_1_ramassee == true && ramassage_loot_branche_1 == false){
+            if (keys.E.isDown){
+                ramassage_loot_branche_1 = true;
+                loot_branche_1.destroy();
+                poids_inventaire += 1;
+                degats_swing += 1;
+            }
+        }
+        
+        if (player.x > 900 && player.x < 1050 && loot_branche_2_ramassee == false){
+            loot_branche_2_ramassee = true;
+            loot_branche_2.anims.play('branche_on', true);
+        }
+        if (loot_branche_2_ramassee == true && ramassage_loot_branche_2 == false){
+            if (keys.E.isDown){
+                ramassage_loot_branche_2 = true;
+                loot_branche_2.destroy();
+                poids_inventaire += 1;
+                degats_swing += 1;
+            }
+        }
+        
+        if (player.x > 1800 && player.x < 1950 && loot_branche_3_ramassee == false){
+            loot_branche_3_ramassee = true;
+            loot_branche_3.anims.play('branche_on', true);
+        }
+        if (loot_branche_3_ramassee == true && ramassage_loot_branche_3 == false){
+            if (keys.E.isDown){
+                ramassage_loot_branche_3 = true;
+                loot_branche_3.destroy();
+                poids_inventaire += 1;
+                degats_swing += 1;
+            }
+        }
+        
+        if (player.x > 2100 && player.x < 2250 && loot_branche_4_ramassee == false){
+            loot_branche_4_ramassee = true;
+            loot_branche_4.anims.play('branche_on', true);
+        }
+        if (loot_branche_4_ramassee == true && ramassage_loot_branche_4 == false){
+            if (keys.E.isDown){
+                ramassage_loot_branche_4 = true;
+                loot_branche_4.destroy();
+                poids_inventaire += 1;
+                degats_swing += 1;
+            }
+        }
+        
+        if (player.x > 3000 && player.x < 3150 && loot_branche_5_ramassee == false){
+            loot_branche_5_ramassee = true;
+            loot_branche_5.anims.play('branche_on', true);
+        }
+        if (loot_branche_5_ramassee == true && ramassage_loot_branche_5 == false){
+            if (keys.E.isDown){
+                ramassage_loot_branche_5 = true;
+                loot_branche_5.destroy();
+                poids_inventaire += 1;
+                degats_swing += 1;
+            }
+        }
+        
+        //loot caillous//
+        if (player.x > 600 && player.x < 750 && loot_caillou_1_ramassee == false){
+            loot_caillou_1_ramassee = true;
+            loot_caillou_1.anims.play('caillou_out', true);
+        }
+        if (loot_caillou_1_ramassee == true && ramassage_loot_caillou_1 == false){
+            if (keys.E.isDown){
+                ramassage_loot_caillou_1 = true;
+                loot_caillou_1.destroy();
+                poids_inventaire += 1;
+                degats_swing += 1;
+            }
+        }
+        
+        if (player.x > 1200 && player.x < 1350 && loot_caillou_2_ramassee == false){
+            loot_caillou_2_ramassee = true;
+            loot_caillou_2.anims.play('caillou_out', true);
+        }
+        if (loot_caillou_2_ramassee == true && ramassage_loot_caillou_2 == false){
+            if (keys.E.isDown){
+                ramassage_loot_caillou_2 = true;
+                loot_caillou_2.destroy();
+                poids_inventaire += 1;
+                degats_swing += 1;
+            }
+        }
+        
+        if (player.x > 1500 && player.x < 1650 && loot_caillou_3_ramassee == false){
+            loot_caillou_3_ramassee = true;
+            loot_caillou_3.anims.play('caillou_out', true);
+        }
+        if (loot_caillou_3_ramassee == true && ramassage_loot_caillou_3 == false){
+            if (keys.E.isDown){
+                ramassage_loot_caillou_3 = true;
+                loot_caillou_3.destroy();
+                poids_inventaire += 1;
+                degats_swing += 1;
+            }
+        }
+        
+        if (player.x > 2400 && player.x < 2550 && loot_caillou_4_ramassee == false){
+            loot_caillou_4_ramassee = true;
+            loot_caillou_4.anims.play('caillou_out', true);
+        }
+        if (loot_caillou_4_ramassee == true && ramassage_loot_caillou_4 == false){
+            if (keys.E.isDown){
+                ramassage_loot_caillou_4 = true;
+                loot_caillou_4.destroy();
+                poids_inventaire += 1;
+                degats_swing += 1;
+            }
+        }
+        
+        if (player.x > 2700 && player.x < 2850 && loot_caillou_5_ramassee == false){
+            loot_caillou_5_ramassee = true;
+            loot_caillou_5.anims.play('caillou_out', true);
+        }
+        if (loot_caillou_5_ramassee == true && ramassage_loot_caillou_5 == false){
+            if (keys.E.isDown){
+                ramassage_loot_caillou_5 = true;
+                loot_caillou_5.destroy();
+                poids_inventaire += 1;
+                degats_swing += 1;
+            }
+        }
+        
         
         if(player.x >= 3840 && choix_effectue == false){
             en_pause = true;
@@ -607,10 +970,10 @@ class SceneOne extends Phaser.Scene{
     
         
         
-        if (fireAttackUsed == false){
+        /*if (fireAttackUsed == false){
             fireAttackUsed = true;
             fireAttack();
-        }
+        }*/
         
         if (pv_player <= 0){
             player.setTint(0xff0000);
@@ -628,7 +991,7 @@ class SceneOne extends Phaser.Scene{
         
         if(keys.kright.isDown && keys.space.isUp && canSwing == true){
             player.anims.play('right', true);
-            player.setVelocityX(2000);
+            player.setVelocityX(200);
         }
         else if (keys.kleft.isDown && keys.space.isUp && canSwing == true){
             player.anims.play('left', true);
@@ -687,6 +1050,38 @@ class SceneOne extends Phaser.Scene{
                 leopard.setVelocityX(0);
             }
         }
+        
+        if (ennemy_arbre_mort == false){
+            if (player.x < ennemy_arbre.x && ennemy_arbre.x - player.x <= 400){
+                ennemy_arbre.setVelocityX(-40);
+                if(ennemy_arbre_a_tire == false){
+                    ennemy_arbre_a_tire = true;
+                    ennemy_arbre.anims.play('arbre_attack_left', true);
+                    tirEnnemi(-150, 0, projectileLeftSpeed);
+                    setTimeout(function(){ennemy_arbre.anims.play('arbre_left', true)}, 1000);
+                    setTimeout(function(){ennemy_arbre_a_tire = false}, 4000);
+                }
+            }
+            if (player.x > ennemy_arbre.x && player.x - ennemy_arbre.x  <= 400){
+                ennemy_arbre.setVelocityX(40);
+                if(ennemy_arbre_a_tire == false){
+                    ennemy_arbre_a_tire = true;
+                    ennemy_arbre.anims.play('arbre_attack_right', true);
+                    tirEnnemi(150, 0, projectileRightSpeed);
+                    setTimeout(function(){ennemy_arbre.anims.play('arbre_right', true)}, 1000);
+                    setTimeout(function(){ennemy_arbre_a_tire = false}, 4000);
+                }
+            }
+        }
+        
+        if (ennemy_serpent_mort == false){
+            if (player.x < ennemy_serpent.x){
+                ennemy_serpent.anims.play('serpent_left');
+            }
+            else if (player.x > ennemy_serpent.x){
+                ennemy_serpent.anims.play('serpent_right');
+            }
+        }
         /*if (leopard.body.velocity.x == 0 && leopard.x - player.x > 0){
             leopard.anims.play('leopard_idle_right');
         }
@@ -705,11 +1100,11 @@ function attaque(x, y){
 }
 
 function tirEnnemi(x, y, velocity){
-    newProjectile = projectile.create(ennemy.x + x, ennemy.y + y, 'attaque');
+    newProjectile = projectile.create(ennemy_arbre.x + x, ennemy_arbre.y + y, 'projectile_pollen');
     newProjectile.body.setAllowGravity(false);
     newProjectile.setVelocityX(velocity);
-    setTimeout(function(){tirToDestroy = projectile.getFirstAlive(false)}, 7000);
-    setTimeout(function(){tirToDestroy.destroy()}, 7000);
+    //setTimeout(function(){tirToDestroy = projectile.getFirstAlive(false)}, 7000);
+    //setTimeout(function(){tirToDestroy.destroy()}, 7000);
     tirEnJeu = true;
 }
 

@@ -203,6 +203,11 @@ class SceneOne extends Phaser.Scene{
         this.load.image('menu_choix_fin', 'assets/menu_choix_fin.png');
         
         this.load.audio('ambiant', 'audio/ambiant.mp3');
+        //bruitages boss//
+        this.load.audio('fireball', 'audio/fireball.mp3');
+        this.load.audio('fouet', 'audio/getATasteOfMyPower.mp3');
+        this.load.audio('flamewall', 'audio/RiseFromTheGround.mp3');
+        this.load.audio('theme_boss', 'audio/theme_boss.mp3');
 
     }
     create(){

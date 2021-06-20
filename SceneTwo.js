@@ -63,11 +63,7 @@ class SceneTwo extends Phaser.Scene{
         this.load.image('fouet_5', 'assets/fouet_5.png');
         this.load.image('fireball', 'assets/fireball.png');
         
-        //bruitages boss//
-        this.load.audio('fireball', 'audio/fireball.mp3');
-        this.load.audio('fouet', 'audio/getATasteOfMyPower.mp3');
-        this.load.audio('flamewall', 'audio/RiseFromTheGround.mp3');
-        this.load.audio('theme_boss', 'audio/theme_boss.mp3');
+        
         
         this.load.image('ending', 'assets/ending.png');
         this.load.image('demi_tour', 'assets/texte_fin_demi_tour.png');

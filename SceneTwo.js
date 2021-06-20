@@ -19,10 +19,20 @@ var fireball_tiree = false;
 var phase_1 = false;
 var phase_2 = false;
 var phase_3 = false;
+var rng_spell;
+var rng_generee = false;
+var numero_spell;
+var numero_spell_2;
+var spell_used = false;
 
 var whiped = false;
 
 var pv_boss = 10;
+
+//bruitages boss//
+var son_fireball;
+var son_fouet;
+var son_flamewall
 
 class SceneTwo extends Phaser.Scene{
     constructor(){
@@ -38,8 +48,18 @@ class SceneTwo extends Phaser.Scene{
         this.load.image('fouet_4', 'assets/fouet_4.png');
         this.load.image('fouet_5', 'assets/fouet_5.png');
         this.load.image('fireball', 'assets/fireball.png');
+        
+        //bruitages boss//
+        this.load.audio('fireball', 'audio/fireball.mp3');
+        this.load.audio('fouet', 'audio/getATasteOfMyPower.mp3');
+        this.load.audio('flamewall', 'audio/RiseFromTheGround.mp3');
     }
     create(){
+        
+        //bruitages boss//
+        son_fireball = this.sound.add('fireball');
+        son_fouet = this.sound.add('fouet');
+        son_flamewall = this.sound.add('flamewall');
         
         keys = this.input.keyboard.addKeys({
             kleft: Phaser.Input.Keyboard.KeyCodes.LEFT,
@@ -136,6 +156,7 @@ class SceneTwo extends Phaser.Scene{
                 //flipped = true;
                 if (boss.x > player.x){
                     fireball.setVelocityX(projectileRightSpeed);
+                    fireball.flipX = true;
                 }
                 else if (boss.x < player.x){
                     fireball.setVelocityX(projectileLeftSpeed);
@@ -165,6 +186,7 @@ class SceneTwo extends Phaser.Scene{
         function hitFlammeBoss(boss, fireball){
             if (pv_boss >= 0){
                 pv_boss -= 1;
+                if (pv_boss > 0){
                 boss.setAlpha(0);
                 setTimeout(function(){boss.setAlpha(1)}, 200);
                 setTimeout(function(){boss.setAlpha(0)}, 400);
@@ -175,6 +197,7 @@ class SceneTwo extends Phaser.Scene{
                 setTimeout(function(){boss.setAlpha(1)}, 1400);
                 setTimeout(function(){boss.setAlpha(0)}, 1600);
                 setTimeout(function(){boss.setAlpha(1)}, 1800);
+                }
             }
             fireball.destroy();
         }
@@ -367,15 +390,112 @@ class SceneTwo extends Phaser.Scene{
         }
     }
     update(){
+        if (pv_boss <= 0){
+            setTimeout(function(){boss.setAlpha(0.9)}, 200);
+            setTimeout(function(){boss.setAlpha(0.8)}, 400);
+            setTimeout(function(){boss.setAlpha(0.7)}, 600);
+            setTimeout(function(){boss.setAlpha(0.6)}, 800);
+            setTimeout(function(){boss.setAlpha(0.5)}, 1000);
+            setTimeout(function(){boss.setAlpha(0.4)}, 1200);
+            setTimeout(function(){boss.setAlpha(0.3)}, 1400);
+            setTimeout(function(){boss.setAlpha(0.2)}, 1600);
+            setTimeout(function(){boss.setAlpha(0.1)}, 1800);
+            setTimeout(function(){boss.destroy()}, 2000);
+        }
+        if (pv_boss >= 7){
+            phase_1 = true;
+            phase_2 = false;
+            phase_3 = false;
+        }
+        if (pv_boss >= 4 && pv_boss < 7){
+            phase_1 = false;
+            phase_2 = true;
+            phase_3 = false;
+        }
+        if (pv_boss < 4){
+            phase_1 = false;
+            phase_2 = false;
+            phase_3 = true;
+        }
         
-        if (phase_1 == true && phase_2 == false && phase_3 == false && fireball_tiree == false){
+        if(phase_2 == true && rng_generee == false){
+            rng_generee = true;
+            numero_spell = getRandomInt(2);
+            setTimeout(function(){
+                rng_generee = false;
+            }, 4000);
+        }
+        if(phase_3 == true && rng_generee == false){
+            rng_generee = true;
+            numero_spell_2 = getRandomInt(3);
+            setTimeout(function(){
+                rng_generee = false;
+            }, 4000);
+        }
+        
+        
+        if (phase_1 == true && phase_2 == false && phase_3 == false && fireball_tiree == false && pv_player > 0 && pv_boss > 0){
+            son_fireball.play();
             fireball_tiree = true
             new_fireball = fireball.create(boss.x - 250, boss.y + 100, 'fireball');
             new_fireball.setVelocityX(-150);
             new_fireball.body.setAllowGravity(false);
             setTimeout(function(){
                 fireball_tiree = false;
-            }, 3000);
+            }, 4000);
+        }
+        
+        if (phase_2 == true && phase_1 == false && phase_3 == false && spell_used == false && pv_player > 0 && pv_boss > 0){
+            spell_used = true;
+            if (numero_spell == 0){
+                son_fireball.play();
+                new_fireball = fireball.create(boss.x - 250, boss.y + 100, 'fireball');
+                new_fireball.setVelocityX(-150);
+                new_fireball.body.setAllowGravity(false);
+                setTimeout(function(){
+                    spell_used = false;
+                }, 4000);
+            }
+            else if (numero_spell == 1){
+                son_fouet.play();
+                setTimeout(function(){
+                    whipAttack();
+                }, 1000);
+                setTimeout(function(){
+                spell_used =  false;
+                }, 4000);
+            }
+        }
+        
+        if (phase_3 == true && phase_1 == false && phase_2 == false && spell_used == false && pv_player > 0 && pv_boss > 0){
+            spell_used = true;
+            if (numero_spell_2 == 0){
+                son_fireball.play();
+                new_fireball = fireball.create(boss.x - 250, boss.y + 100, 'fireball');
+                new_fireball.setVelocityX(-150);
+                new_fireball.body.setAllowGravity(false);
+                setTimeout(function(){
+                    spell_used = false;
+                }, 4000);
+            }
+            else if (numero_spell_2 == 1){
+                son_fouet.play();
+                setTimeout(function(){
+                    whipAttack();
+                }, 1000);
+                setTimeout(function(){
+                    spell_used = false;
+                }, 4000);
+            }
+            else if (numero_spell_2 == 2){
+                son_flamewall.play();
+                setTimeout(function(){
+                    fireAttack();
+                }, 1000);
+                setTimeout(function(){
+                    spell_used = false;
+                }, 4000);
+            }
         }
         /*if (whiped == false){
             whiped = true;
@@ -538,31 +658,31 @@ class SceneTwo extends Phaser.Scene{
 }*/
 
 function fireAttack(){
-    new_flamme1 = flamme_1.create(600, 350, 'flamme_1');
+    new_flamme1 = flamme_1.create(150, 350, 'flamme_1');
     new_flamme1.body.setAllowGravity(false);
     setTimeout(function(){
         new_flamme1.destroy();
-        new_flamme2 = flamme_2.create(600, 350, 'flamme_2');
+        new_flamme2 = flamme_2.create(150, 350, 'flamme_2');
         new_flamme2.body.setAllowGravity(false);
     }, 200);
     setTimeout(function(){
         new_flamme2.destroy();
-        new_flamme3 = flamme_3.create(600, 350, 'flamme_3');
+        new_flamme3 = flamme_3.create(150, 350, 'flamme_3');
         new_flamme3.body.setAllowGravity(false);
     }, 400);
     setTimeout(function(){
         new_flamme3.destroy();
-        new_flamme4 = flamme_4.create(600, 350, 'flamme_4');
+        new_flamme4 = flamme_4.create(150, 350, 'flamme_4');
         new_flamme4.body.setAllowGravity(false);
     }, 600);
     setTimeout(function(){
         new_flamme4.destroy();
-        new_flamme5 = flamme_5.create(600, 350, 'flamme_5');
+        new_flamme5 = flamme_5.create(150, 350, 'flamme_5');
         new_flamme5.body.setAllowGravity(false);
     }, 800);
     setTimeout(function(){
         new_flamme5.destroy();
-        new_flamme6 = flamme_6.create(600, 350, 'flamme_6');
+        new_flamme6 = flamme_6.create(150, 350, 'flamme_6');
         new_flamme6.body.setAllowGravity(false);
     }, 1000);
     setTimeout(function(){
@@ -601,4 +721,8 @@ function whipAttack(){
     setTimeout(function(){
         new_fouet_5.destroy();
     }, 1000);
+}
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
 }

@@ -628,7 +628,7 @@ class SceneOne extends Phaser.Scene{
         
         if(keys.kright.isDown && keys.space.isUp && canSwing == true){
             player.anims.play('right', true);
-            player.setVelocityX(200);
+            player.setVelocityX(2000);
         }
         else if (keys.kleft.isDown && keys.space.isUp && canSwing == true){
             player.anims.play('left', true);

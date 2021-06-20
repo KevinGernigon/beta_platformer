@@ -28,6 +28,7 @@ var spell_used = false;
 var whiped = false;
 
 var pv_boss = 15;
+var boss_invincible = false;
 
 //bruitages boss//
 var son_fireball;
@@ -43,6 +44,7 @@ var choix_non;
 var texte_demi_tour;
 var texte_fin;
 var ending = false;
+var texte_ending = false;
 
 var bossStarted = false;
 
@@ -89,6 +91,7 @@ class SceneTwo extends Phaser.Scene{
             space: Phaser.Input.Keyboard.KeyCodes.SPACE,
             shift: Phaser.Input.Keyboard.KeyCodes.SHIFT,
             escape : Phaser.Input.Keyboard.KeyCodes.ESC,
+            enter: Phaser.Input.Keyboard.KeyCodes.ENTER,
             A: Phaser.Input.Keyboard.KeyCodes.A,
             E: Phaser.Input.Keyboard.KeyCodes.E
         });
@@ -168,6 +171,7 @@ class SceneTwo extends Phaser.Scene{
             theme_boss.pause();
             this.physics.pause();
             texte_demi_tour.setVisible(true);
+            texte_ending = true;
             message_boss.setVisible(false);
             choix_demi_tour.setVisible(false);
             choix_oui.setVisible(false);
@@ -199,8 +203,9 @@ class SceneTwo extends Phaser.Scene{
         this.physics.add.overlap(boss, swing, swingBoss, null, this);
         
         function swingBoss(boss, swing){
-            if (pv_boss >= 0){
-                pv_boss -= degats_swing;
+            if (pv_boss >= 0 && !boss_invincible){
+                boss_invincible = true;
+                pv_boss -= Math.round(degats_swing / 2);
                 if (pv_boss > 0){
                     boss.setAlpha(0);
                     setTimeout(function(){boss.setAlpha(1)}, 200);
@@ -212,6 +217,7 @@ class SceneTwo extends Phaser.Scene{
                     setTimeout(function(){boss.setAlpha(1)}, 1400);
                     setTimeout(function(){boss.setAlpha(0)}, 1600);
                     setTimeout(function(){boss.setAlpha(1)}, 1800);
+                    setTimeout(function(){boss_invincible = false}, 2000);
                 }
             }
         }
@@ -459,6 +465,70 @@ class SceneTwo extends Phaser.Scene{
             this.physics.pause();
         }
         
+        if(texte_ending == true && keys.enter.isDown){
+             surOptions = false;
+             surCredits = false;
+             notJumping = true;
+             ennemyATire = false;
+             pv_leopard = 2;
+             leopard_invincible = false;
+             leopard_mort = false;
+             pv_arbre = 4;
+             ennemy_arbre_invincible = false;
+             ennemy_arbre_a_tire = false;
+             ennemy_arbre_mort = false;
+             pv_serpent = 6;
+             ennemy_serpent_mort = false;
+             ennemy_serpent_invincible = false;
+             ennemy_serpent_mort = false;
+             canSwing = true;
+             degats_swing = 1;
+             tirEnJeu = false;
+             projectileLeftSpeed = -80;
+             projectileRightSpeed = 80;
+             flipped = false;
+             invincible = false;
+             pv_player = 5;
+             poids_inventaire = 0;
+             fireAttackUsed = false;
+             gameStarted = false;
+             loot_branche_1_ramassee = false;
+             ramassage_loot_branche_1 = false;
+             loot_caillou_1_ramassee = false;
+             ramassage_loot_caillou_1 = false;
+             loot_branche_2_ramassee = false;
+             ramassage_loot_branche_2 = false;
+             loot_caillou_2_ramassee = false;
+             ramassage_loot_caillou_2 = false;
+             loot_branche_3_ramassee = false;
+             ramassage_loot_branche_3 = false;
+             loot_caillou_3_ramassee = false;
+             ramassage_loot_caillou_3 = false;
+             loot_branche_4_ramassee = false;
+             ramassage_loot_branche_4 = false;
+             loot_caillou_4_ramassee = false;
+             ramassage_loot_caillou_4 = false;
+             loot_branche_5_ramassee = false;
+             ramassage_loot_branche_5 = false;
+             loot_caillou_5_ramassee = false;
+             ramassage_loot_caillou_5 = false;
+             message_jouer = false;
+             message_jouer_present = false;
+             choix_effectue = false;
+             en_pause = false;
+             fireball_tiree = false;
+             phase_1 = false;
+             phase_2 = false;
+             phase_3 = false;
+             rng_generee = false;
+             spell_used = false;
+             whiped = false;
+             pv_boss = 15;
+             boss_invincible = false;
+             texte_ending = false;
+             this.scene.start('ecranTitre');
+        }
+        
         if(pv_player == 5){
                 heart_full_1.setVisible(true);
                 heart_full_2.setVisible(true);
@@ -578,6 +648,7 @@ class SceneTwo extends Phaser.Scene{
                     theme_boss.pause();
                     ending = true;
                     texte_fin.setVisible(true);
+                    texte_ending = true;
                 }, 2800);
             }
             if (pv_boss >= 10){

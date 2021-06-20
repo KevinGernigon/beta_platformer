@@ -136,6 +136,8 @@ var bouton_non;
 var choix_effectue = false;
 var en_pause = false;
 
+var theme_foret;
+
 class SceneOne extends Phaser.Scene{
     constructor(){
         super("sceneOne");
@@ -199,9 +201,15 @@ class SceneOne extends Phaser.Scene{
         this.load.image('bouton_oui', 'assets/bouton_oui.png');
         this.load.image('bouton_non', 'assets/bouton_non.png');
         this.load.image('menu_choix_fin', 'assets/menu_choix_fin.png');
+        
+        this.load.audio('ambiant', 'audio/ambiant.mp3');
 
     }
     create(){
+        
+        theme_foret = this.sound.add('ambiant', {volume: 0.1});
+        theme_foret.play();
+        
         this.add.image(448, 224, 'background').setScrollFactor(0.3); 
         this.add.image(1344, 224, 'background').setScrollFactor(0.3);
         this.add.image(2240, 224, 'background').setScrollFactor(0.3);
@@ -678,6 +686,7 @@ class SceneOne extends Phaser.Scene{
             bouton_non.setVisible(false);
             fond_gris.setVisible(false);
             this.scene.start('sceneTwo');
+            theme_foret.pause();
         }, this);
         bouton_non.on('pointerdown', function(){
             choix_effectue = true;

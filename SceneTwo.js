@@ -27,13 +27,24 @@ var spell_used = false;
 
 var whiped = false;
 
-var pv_boss = 10;
+var pv_boss = 15;
 
 //bruitages boss//
 var son_fireball;
 var son_fouet;
 var son_flamewall;
 var theme_boss;
+
+var message_boss;
+var choix_demi_tour;
+var choix_oui;
+var choix_non;
+
+var texte_demi_tour;
+var texte_fin;
+var ending = false;
+
+var bossStarted = false;
 
 class SceneTwo extends Phaser.Scene{
     constructor(){
@@ -55,11 +66,16 @@ class SceneTwo extends Phaser.Scene{
         this.load.audio('fouet', 'audio/getATasteOfMyPower.mp3');
         this.load.audio('flamewall', 'audio/RiseFromTheGround.mp3');
         this.load.audio('theme_boss', 'audio/theme_boss.mp3');
+        
+        this.load.image('ending', 'assets/ending.png');
+        this.load.image('demi_tour', 'assets/texte_fin_demi_tour.png');
+        this.load.image('choix_demi_tour', 'assets/message_demi_tour.png');
+        this.load.image('bulle_message_boss', 'assets/bulle_message_boss.png');
     }
     create(){
         
         //bruitages boss//
-        theme_boss = this.sound.add('theme_boss', {volume: 0.7});
+        theme_boss = this.sound.add('theme_boss', {volume: 0.5});
         theme_boss.play();
         son_fireball = this.sound.add('fireball');
         son_fouet = this.sound.add('fouet');
@@ -140,6 +156,32 @@ class SceneTwo extends Phaser.Scene{
         player.setCollideWorldBounds();
         boss.setCollideWorldBounds();
         
+        message_boss = this.add.image(500, 100, 'bulle_message_boss');
+        choix_demi_tour = this.add.image(250, 200, 'choix_demi_tour');
+        choix_oui = this.add.sprite(170, 300, 'bouton_oui').setInteractive().setScale(0.5);
+        choix_non = this.add.sprite(320, 300, 'bouton_non').setInteractive().setScale(0.5);
+        
+        texte_demi_tour = this.add.image(448,224, 'demi_tour').setVisible(false);
+        texte_fin = this.add.image(448,224, 'ending').setVisible(false);
+        
+        choix_oui.on('pointerdown', function(){
+            theme_boss.pause();
+            this.physics.pause();
+            texte_demi_tour.setVisible(true);
+            message_boss.setVisible(false);
+            choix_demi_tour.setVisible(false);
+            choix_oui.setVisible(false);
+            choix_non.setVisible(false);
+        }, this);
+        
+        choix_non.on('pointerdown', function(){
+            bossStarted = true;
+            message_boss.setVisible(false);
+            choix_demi_tour.setVisible(false);
+            choix_oui.setVisible(false);
+            choix_non.setVisible(false);
+        });
+        
         this.physics.add.overlap(fireball, swing, renvoiFireball, null, this);
         this.physics.add.collider(player, fireball, hitFlamme, null, this);
         this.physics.add.collider(boss, fireball, hitFlammeBoss, null, this);
@@ -154,16 +196,35 @@ class SceneTwo extends Phaser.Scene{
         this.physics.add.overlap(player, flamme_4, hitBossFlamme_4, null, this);
         this.physics.add.overlap(player, flamme_5, hitBossFlamme_5, null, this);
         this.physics.add.overlap(player, boss, hitBoss, null, this);
+        this.physics.add.overlap(boss, swing, swingBoss, null, this);
+        
+        function swingBoss(boss, swing){
+            if (pv_boss >= 0){
+                pv_boss -= degats_swing;
+                if (pv_boss > 0){
+                    boss.setAlpha(0);
+                    setTimeout(function(){boss.setAlpha(1)}, 200);
+                    setTimeout(function(){boss.setAlpha(0)}, 400);
+                    setTimeout(function(){boss.setAlpha(1)}, 600);
+                    setTimeout(function(){boss.setAlpha(0)}, 800);
+                    setTimeout(function(){boss.setAlpha(1)}, 1000);
+                    setTimeout(function(){boss.setAlpha(0)}, 1200);
+                    setTimeout(function(){boss.setAlpha(1)}, 1400);
+                    setTimeout(function(){boss.setAlpha(0)}, 1600);
+                    setTimeout(function(){boss.setAlpha(1)}, 1800);
+                }
+            }
+        }
         
         function renvoiFireball(fireball, swing){
             //if (flipped == false){
                 //flipped = true;
                 if (boss.x > player.x){
-                    fireball.setVelocityX(projectileRightSpeed);
+                    fireball.setVelocityX(150);
                     fireball.flipX = true;
                 }
                 else if (boss.x < player.x){
-                    fireball.setVelocityX(projectileLeftSpeed);
+                    fireball.setVelocityX(-150);
                 }
                 //setTimeout(function(){flipped = false}, 5000);
             //}
@@ -394,262 +455,281 @@ class SceneTwo extends Phaser.Scene{
         }
     }
     update(){
-        if (pv_boss <= 0){
-            setTimeout(function(){boss.setAlpha(0.9)}, 200);
-            setTimeout(function(){boss.setAlpha(0.8)}, 400);
-            setTimeout(function(){boss.setAlpha(0.7)}, 600);
-            setTimeout(function(){boss.setAlpha(0.6)}, 800);
-            setTimeout(function(){boss.setAlpha(0.5)}, 1000);
-            setTimeout(function(){boss.setAlpha(0.4)}, 1200);
-            setTimeout(function(){boss.setAlpha(0.3)}, 1400);
-            setTimeout(function(){boss.setAlpha(0.2)}, 1600);
-            setTimeout(function(){boss.setAlpha(0.1)}, 1800);
-            setTimeout(function(){boss.destroy()}, 2000);
-        }
-        if (pv_boss >= 7){
-            phase_1 = true;
-            phase_2 = false;
-            phase_3 = false;
-        }
-        if (pv_boss >= 4 && pv_boss < 7){
-            phase_1 = false;
-            phase_2 = true;
-            phase_3 = false;
-        }
-        if (pv_boss < 4){
-            phase_1 = false;
-            phase_2 = false;
-            phase_3 = true;
-        }
-        
-        if(phase_2 == true && rng_generee == false){
-            rng_generee = true;
-            numero_spell = getRandomInt(2);
-            setTimeout(function(){
-                rng_generee = false;
-            }, 4000);
-        }
-        if(phase_3 == true && rng_generee == false){
-            rng_generee = true;
-            numero_spell_2 = getRandomInt(3);
-            setTimeout(function(){
-                rng_generee = false;
-            }, 4000);
-        }
-        
-        
-        if (phase_1 == true && phase_2 == false && phase_3 == false && fireball_tiree == false && pv_player > 0 && pv_boss > 0){
-            son_fireball.play();
-            fireball_tiree = true
-            new_fireball = fireball.create(boss.x - 250, boss.y + 100, 'fireball');
-            new_fireball.setVelocityX(-150);
-            new_fireball.body.setAllowGravity(false);
-            setTimeout(function(){
-                fireball_tiree = false;
-            }, 4000);
-        }
-        
-        if (phase_2 == true && phase_1 == false && phase_3 == false && spell_used == false && pv_player > 0 && pv_boss > 0){
-            spell_used = true;
-            if (numero_spell == 0){
-                son_fireball.play();
-                new_fireball = fireball.create(boss.x - 250, boss.y + 100, 'fireball');
-                new_fireball.setVelocityX(-150);
-                new_fireball.body.setAllowGravity(false);
-                setTimeout(function(){
-                    spell_used = false;
-                }, 4000);
-            }
-            else if (numero_spell == 1){
-                son_fouet.play();
-                setTimeout(function(){
-                    whipAttack();
-                }, 1000);
-                setTimeout(function(){
-                spell_used =  false;
-                }, 4000);
-            }
-        }
-        
-        if (phase_3 == true && phase_1 == false && phase_2 == false && spell_used == false && pv_player > 0 && pv_boss > 0){
-            spell_used = true;
-            if (numero_spell_2 == 0){
-                son_fireball.play();
-                new_fireball = fireball.create(boss.x - 250, boss.y + 100, 'fireball');
-                new_fireball.setVelocityX(-150);
-                new_fireball.body.setAllowGravity(false);
-                setTimeout(function(){
-                    spell_used = false;
-                }, 4000);
-            }
-            else if (numero_spell_2 == 1){
-                son_fouet.play();
-                setTimeout(function(){
-                    whipAttack();
-                }, 1000);
-                setTimeout(function(){
-                    spell_used = false;
-                }, 4000);
-            }
-            else if (numero_spell_2 == 2){
-                son_flamewall.play();
-                setTimeout(function(){
-                    fireAttack();
-                }, 1500);
-                setTimeout(function(){
-                    spell_used = false;
-                }, 4000);
-            }
-        }
-        /*if (whiped == false){
-            whiped = true;
-            whipAttack();
-            setTimeout(function(){
-                whiped = false;
-            }, 2000);
-        }*/
-        
-        if(pv_player == 5){
-            heart_full_1.setVisible(true);
-            heart_full_2.setVisible(true);
-            heart_full_3.setVisible(true);
-            heart_full_4.setVisible(true);
-            heart_full_5.setVisible(true);
-            
-            heart_empty_1.setVisible(false);
-            heart_empty_2.setVisible(false);
-            heart_empty_3.setVisible(false);
-            heart_empty_4.setVisible(false);
-            heart_empty_4.setVisible(false);
-        }
-        if(pv_player == 4){
-            heart_full_1.setVisible(true);
-            heart_full_2.setVisible(true);
-            heart_full_3.setVisible(true);
-            heart_full_4.setVisible(true);
-            heart_full_5.setVisible(false);
-            
-            heart_empty_1.setVisible(false);
-            heart_empty_2.setVisible(false);
-            heart_empty_3.setVisible(false);
-            heart_empty_4.setVisible(false);
-            heart_empty_5.setVisible(true);
-        }
-        if(pv_player == 3){
-            heart_full_1.setVisible(true);
-            heart_full_2.setVisible(true);
-            heart_full_3.setVisible(true);
-            heart_full_4.setVisible(false);
-            heart_full_5.setVisible(false);
-            
-            heart_empty_1.setVisible(false);
-            heart_empty_2.setVisible(false);
-            heart_empty_3.setVisible(false);
-            heart_empty_4.setVisible(true);
-            heart_empty_5.setVisible(true);
-        }
-        if(pv_player == 2){
-            heart_full_1.setVisible(true);
-            heart_full_2.setVisible(true);
-            heart_full_3.setVisible(false);
-            heart_full_4.setVisible(false);
-            heart_full_5.setVisible(false);
-            
-            heart_empty_1.setVisible(false);
-            heart_empty_2.setVisible(false);
-            heart_empty_3.setVisible(true);
-            heart_empty_4.setVisible(true);
-            heart_empty_5.setVisible(true);
-        }
-        if(pv_player == 1){
-            heart_full_1.setVisible(true);
-            heart_full_2.setVisible(false);
-            heart_full_3.setVisible(false);
-            heart_full_4.setVisible(false);
-            heart_full_5.setVisible(false);
-            
-            heart_empty_1.setVisible(false);
-            heart_empty_2.setVisible(true);
-            heart_empty_3.setVisible(true);
-            heart_empty_4.setVisible(true);
-            heart_empty_5.setVisible(true);
-        }
-        if(pv_player <= 0){
-            heart_full_1.setVisible(false);
-            heart_full_2.setVisible(false);
-            heart_full_3.setVisible(false);
-            heart_full_4.setVisible(false);
-            heart_full_5.setVisible(false);
-            
-            heart_empty_1.setVisible(true);
-            heart_empty_2.setVisible(true);
-            heart_empty_3.setVisible(true);
-            heart_empty_4.setVisible(true);
-            heart_empty_5.setVisible(true);
-            
+        if (ending == true){
             this.physics.pause();
         }
         
-        if (poids_inventaire <= 3){
-            inventaire_1.setVisible(true);
-            inventaire_2.setVisible(false);
-            inventaire_3.setVisible(false);
-        }
-        if (poids_inventaire <= 7 && poids_inventaire > 3){
-            inventaire_1.setVisible(false);
-            inventaire_2.setVisible(true);
-            inventaire_3.setVisible(false);
-        }
-        if (poids_inventaire > 7){
-            inventaire_1.setVisible(false);
-            inventaire_2.setVisible(false);
-            inventaire_3.setVisible(true);
-        }
-        if (keys.up.isDown && notJumping == true){
-            notJumping = false;
-            player.setVelocityY(-250);
+        if(pv_player == 5){
+                heart_full_1.setVisible(true);
+                heart_full_2.setVisible(true);
+                heart_full_3.setVisible(true);
+                heart_full_4.setVisible(true);
+                heart_full_5.setVisible(true);
+
+                heart_empty_1.setVisible(false);
+                heart_empty_2.setVisible(false);
+                heart_empty_3.setVisible(false);
+                heart_empty_4.setVisible(false);
+                heart_empty_4.setVisible(false);
+            }
+            if(pv_player == 4){
+                heart_full_1.setVisible(true);
+                heart_full_2.setVisible(true);
+                heart_full_3.setVisible(true);
+                heart_full_4.setVisible(true);
+                heart_full_5.setVisible(false);
+
+                heart_empty_1.setVisible(false);
+                heart_empty_2.setVisible(false);
+                heart_empty_3.setVisible(false);
+                heart_empty_4.setVisible(false);
+                heart_empty_5.setVisible(true);
+            }
+            if(pv_player == 3){
+                heart_full_1.setVisible(true);
+                heart_full_2.setVisible(true);
+                heart_full_3.setVisible(true);
+                heart_full_4.setVisible(false);
+                heart_full_5.setVisible(false);
+
+                heart_empty_1.setVisible(false);
+                heart_empty_2.setVisible(false);
+                heart_empty_3.setVisible(false);
+                heart_empty_4.setVisible(true);
+                heart_empty_5.setVisible(true);
+            }
+            if(pv_player == 2){
+                heart_full_1.setVisible(true);
+                heart_full_2.setVisible(true);
+                heart_full_3.setVisible(false);
+                heart_full_4.setVisible(false);
+                heart_full_5.setVisible(false);
+
+                heart_empty_1.setVisible(false);
+                heart_empty_2.setVisible(false);
+                heart_empty_3.setVisible(true);
+                heart_empty_4.setVisible(true);
+                heart_empty_5.setVisible(true);
+            }
+            if(pv_player == 1){
+                heart_full_1.setVisible(true);
+                heart_full_2.setVisible(false);
+                heart_full_3.setVisible(false);
+                heart_full_4.setVisible(false);
+                heart_full_5.setVisible(false);
+
+                heart_empty_1.setVisible(false);
+                heart_empty_2.setVisible(true);
+                heart_empty_3.setVisible(true);
+                heart_empty_4.setVisible(true);
+                heart_empty_5.setVisible(true);
+            }
+            if(pv_player <= 0){
+                heart_full_1.setVisible(false);
+                heart_full_2.setVisible(false);
+                heart_full_3.setVisible(false);
+                heart_full_4.setVisible(false);
+                heart_full_5.setVisible(false);
+
+                heart_empty_1.setVisible(true);
+                heart_empty_2.setVisible(true);
+                heart_empty_3.setVisible(true);
+                heart_empty_4.setVisible(true);
+                heart_empty_5.setVisible(true);
+
+                this.physics.pause();
+            }
+
+            if (poids_inventaire <= 3){
+                inventaire_1.setVisible(true);
+                inventaire_2.setVisible(false);
+                inventaire_3.setVisible(false);
+            }
+            if (poids_inventaire <= 7 && poids_inventaire > 3){
+                inventaire_1.setVisible(false);
+                inventaire_2.setVisible(true);
+                inventaire_3.setVisible(false);
+            }
+            if (poids_inventaire > 7){
+                inventaire_1.setVisible(false);
+                inventaire_2.setVisible(false);
+                inventaire_3.setVisible(true);
+            }
+        
+        if (bossStarted == false){
+            theme_boss.pause();
         }
         
-        if (player.body.onFloor()){
-            notJumping = true;
-        }
-        
-        if(keys.kright.isDown && keys.space.isUp && canSwing == true){
-            player.anims.play('right', true);
-            player.setVelocityX(200);
-        }
-        else if (keys.kleft.isDown && keys.space.isUp && canSwing == true){
-            player.anims.play('left', true);
-            player.setVelocityX(-200);
-        }
-        /*if(keys.right.isUp && keys.left.isUp && canSwing == true){
-            player.anims.play('idle_right', true);
-            player.setVelocityX(0);
-        }*/
-        else if (keys.space.isDown && keys.kright.isDown && canSwing && notJumping){
-            player.anims.play('baseball_right', true);
-            player.setVelocityX(0);
-            canSwing = false;
-            attaque(100,0);
-            setTimeout(function(){canSwing = true}, 1500);
-            setTimeout(function(){newSwing.destroy()}, 1500);
-        }
-        else if (keys.space.isDown && keys.kleft.isDown && canSwing && notJumping){
-            player.anims.play('baseball_left', true);
-            player.setVelocityX(0);
-            canSwing = false;
-            attaque(-100,0);
-            setTimeout(function(){canSwing = true}, 1500);
-            setTimeout(function(){newSwing.destroy()}, 1500);
-        }
-        else if (canSwing == true && Phaser.Input.Keyboard.JustUp(left)){
-            player.anims.play('idle_left', true);
-            player.setVelocityX(0);
-        }
-        
-        else if (canSwing == true && Phaser.Input.Keyboard.JustUp(right)){
-            player.anims.play('idle_right', true);
-            player.setVelocityX(0);
+        if(bossStarted == true){
+            theme_boss.resume();
+            if (pv_boss <= 0){
+                setTimeout(function(){boss.setAlpha(0.9)}, 200);
+                setTimeout(function(){boss.setAlpha(0.8)}, 400);
+                setTimeout(function(){boss.setAlpha(0.7)}, 600);
+                setTimeout(function(){boss.setAlpha(0.6)}, 800);
+                setTimeout(function(){boss.setAlpha(0.5)}, 1000);
+                setTimeout(function(){boss.setAlpha(0.4)}, 1200);
+                setTimeout(function(){boss.setAlpha(0.3)}, 1400);
+                setTimeout(function(){boss.setAlpha(0.2)}, 1600);
+                setTimeout(function(){boss.setAlpha(0.1)}, 1800);
+                setTimeout(function(){boss.destroy()}, 2000);
+                setTimeout(function(){
+                    bossStarted = false;
+                    theme_boss.pause();
+                    ending = true;
+                    texte_fin.setVisible(true);
+                }, 2800);
+            }
+            if (pv_boss >= 10){
+                phase_1 = true;
+                phase_2 = false;
+                phase_3 = false;
+            }
+            if (pv_boss >= 5 && pv_boss < 10){
+                phase_1 = false;
+                phase_2 = true;
+                phase_3 = false;
+            }
+            if (pv_boss < 5){
+                phase_1 = false;
+                phase_2 = false;
+                phase_3 = true;
+            }
+
+            if(phase_2 == true && rng_generee == false){
+                rng_generee = true;
+                numero_spell = getRandomInt(2);
+                setTimeout(function(){
+                    rng_generee = false;
+                }, 4000);
+            }
+            if(phase_3 == true && rng_generee == false){
+                rng_generee = true;
+                numero_spell_2 = getRandomInt(3);
+                setTimeout(function(){
+                    rng_generee = false;
+                }, 4000);
+            }
+
+
+            if (phase_1 == true && phase_2 == false && phase_3 == false && fireball_tiree == false && pv_player > 0 && pv_boss > 0){
+                son_fireball.play();
+                fireball_tiree = true
+                new_fireball = fireball.create(boss.x - 250, boss.y + 100, 'fireball');
+                new_fireball.setVelocityX(-150);
+                new_fireball.body.setAllowGravity(false);
+                setTimeout(function(){
+                    fireball_tiree = false;
+                }, 4000);
+            }
+
+            if (phase_2 == true && phase_1 == false && phase_3 == false && spell_used == false && pv_player > 0 && pv_boss > 0){
+                spell_used = true;
+                if (numero_spell == 0){
+                    son_fireball.play();
+                    new_fireball = fireball.create(boss.x - 250, boss.y + 100, 'fireball');
+                    new_fireball.setVelocityX(-150);
+                    new_fireball.body.setAllowGravity(false);
+                    setTimeout(function(){
+                        spell_used = false;
+                    }, 4000);
+                }
+                else if (numero_spell == 1){
+                    son_fouet.play();
+                    setTimeout(function(){
+                        whipAttack();
+                    }, 1000);
+                    setTimeout(function(){
+                    spell_used =  false;
+                    }, 4000);
+                }
+            }
+
+            if (phase_3 == true && phase_1 == false && phase_2 == false && spell_used == false && pv_player > 0 && pv_boss > 0){
+                spell_used = true;
+                if (numero_spell_2 == 0){
+                    son_fireball.play();
+                    new_fireball = fireball.create(boss.x - 250, boss.y + 100, 'fireball');
+                    new_fireball.setVelocityX(-150);
+                    new_fireball.body.setAllowGravity(false);
+                    setTimeout(function(){
+                        spell_used = false;
+                    }, 4000);
+                }
+                else if (numero_spell_2 == 1){
+                    son_fouet.play();
+                    setTimeout(function(){
+                        whipAttack();
+                    }, 1500);
+                    setTimeout(function(){
+                        spell_used = false;
+                    }, 4000);
+                }
+                else if (numero_spell_2 == 2){
+                    son_flamewall.play();
+                    setTimeout(function(){
+                        fireAttack();
+                    }, 2000);
+                    setTimeout(function(){
+                        spell_used = false;
+                    }, 4000);
+                }
+            }
+            /*if (whiped == false){
+                whiped = true;
+                whipAttack();
+                setTimeout(function(){
+                    whiped = false;
+                }, 2000);
+            }*/
+
+            
+            if (keys.up.isDown && notJumping == true){
+                notJumping = false;
+                player.setVelocityY(-250);
+            }
+
+            if (player.body.onFloor()){
+                notJumping = true;
+            }
+
+            if(keys.kright.isDown && keys.space.isUp && canSwing == true){
+                player.anims.play('right', true);
+                player.setVelocityX(200);
+            }
+            else if (keys.kleft.isDown && keys.space.isUp && canSwing == true){
+                player.anims.play('left', true);
+                player.setVelocityX(-200);
+            }
+            /*if(keys.right.isUp && keys.left.isUp && canSwing == true){
+                player.anims.play('idle_right', true);
+                player.setVelocityX(0);
+            }*/
+            else if (keys.space.isDown && keys.kright.isDown && canSwing && notJumping){
+                player.anims.play('baseball_right', true);
+                player.setVelocityX(0);
+                canSwing = false;
+                attaque(100,0);
+                setTimeout(function(){canSwing = true}, 1500);
+                setTimeout(function(){newSwing.destroy()}, 1500);
+            }
+            else if (keys.space.isDown && keys.kleft.isDown && canSwing && notJumping){
+                player.anims.play('baseball_left', true);
+                player.setVelocityX(0);
+                canSwing = false;
+                attaque(-100,0);
+                setTimeout(function(){canSwing = true}, 1500);
+                setTimeout(function(){newSwing.destroy()}, 1500);
+            }
+            else if (canSwing == true && Phaser.Input.Keyboard.JustUp(left)){
+                player.anims.play('idle_left', true);
+                player.setVelocityX(0);
+            }
+
+            else if (canSwing == true && Phaser.Input.Keyboard.JustUp(right)){
+                player.anims.play('idle_right', true);
+                player.setVelocityX(0);
+            }
         }
     }
 }

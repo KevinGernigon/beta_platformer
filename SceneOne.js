@@ -10,13 +10,13 @@ var leopard_invincible = false;
 var leopard_mort = false;
 
 var ennemy_arbre;
-var pv_arbre = 8;
+var pv_arbre = 4;
 var ennemy_arbre_invincible = false;
 var ennemy_arbre_a_tire = false;
 var ennemy_arbre_mort = false;
 
 var ennemy_serpent;
-var pv_serpent = 5;
+var pv_serpent = 6;
 var ennemy_serpent_mort = false;
 var ennemy_serpent_invincible = false;
 var ennemy_serpent_mort = false;
@@ -341,7 +341,7 @@ class SceneOne extends Phaser.Scene{
             if (pv_serpent <= 0){
                 ennemy_serpent_mort = true;
                 ennemy_serpent.destroy();
-                new_heart = loot_heart.create(ennemy_serpent.x, ennemy_serpent.y - 20, 'heart_full');
+                new_heart = loot_heart.create(ennemy_serpent.x, 400, 'heart_full');
                 new_heart.body.setAllowGravity(false);
             }
         }
@@ -383,7 +383,7 @@ class SceneOne extends Phaser.Scene{
             if (pv_arbre <= 0){
                 ennemy_arbre_mort = true;
                 ennemy_arbre.destroy();
-                new_heart = loot_heart.create(ennemy_arbre.x, ennemy_arbre.y - 50, 'heart_full');
+                new_heart = loot_heart.create(ennemy_arbre.x, 400, 'heart_full');
                 new_heart.body.setAllowGravity(false);
             }
         }
@@ -408,7 +408,7 @@ class SceneOne extends Phaser.Scene{
             if (pv_arbre <= 0){
                 ennemy_arbre_mort = true;
                 ennemy_arbre.destroy();
-                new_heart = loot_heart.create(ennemy_arbre.x, ennemy_arbre.y - 50, 'heart_full');
+                new_heart = loot_heart.create(ennemy_arbre.x, 400, 'heart_full');
                 new_heart.body.setAllowGravity(false);
             }
         }
@@ -611,12 +611,12 @@ class SceneOne extends Phaser.Scene{
         });
         this.anims.create({
             key: 'arbre_right',
-            frames: this.anims.generateFrameNumbers('ennemi_arbre', {start: 2, end: 2}),
+            frames: this.anims.generateFrameNumbers('ennemi_arbre', {start: 3, end: 3}),
             repeat: -1
         });
         this.anims.create({
             key: 'arbre_attack_right',
-            frames: this.anims.generateFrameNumbers('ennemi_arbre', {start: 3, end: 3}),
+            frames: this.anims.generateFrameNumbers('ennemi_arbre', {start: 2, end: 2}),
             repeat: -1
         });
         

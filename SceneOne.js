@@ -141,6 +141,9 @@ var theme_foret;
 var souche;
 var tronc;
 
+var player_dead = false;
+var restart = false;
+
 class SceneOne extends Phaser.Scene{
     constructor(){
         super("sceneOne");
@@ -207,9 +210,9 @@ class SceneOne extends Phaser.Scene{
         
         this.load.audio('ambiant', 'audio/ambiant.mp3');
         //bruitages boss//
-        //this.load.audio('fireball', 'audio/fireball.mp3');
-        //this.load.audio('fouet', 'audio/getATasteOfMyPower.mp3');
-        //this.load.audio('flamewall', 'audio/RiseFromTheGround.mp3');
+        this.load.audio('fireball', 'audio/fireball.mp3');
+        this.load.audio('fouet', 'audio/getATasteOfMyPower.mp3');
+        this.load.audio('flamewall', 'audio/RiseFromTheGround.mp3');
         this.load.audio('theme_boss', 'audio/theme_boss.mp3');
         
         //obstacles//
@@ -758,6 +761,12 @@ class SceneOne extends Phaser.Scene{
             }
         }
         
+        if(restart == true){
+            restart = false;
+            this.scene.start('ecranTitre');
+        }
+        
+        
         //loot branches//
         if (player.x > 300 && player.x < 450 && loot_branche_1_ramassee == false){
             loot_branche_1_ramassee = true;
@@ -1033,6 +1042,74 @@ class SceneOne extends Phaser.Scene{
         if (pv_player <= 0){
             player.setTint(0xff0000);
             this.physics.pause();
+            if (player_dead == false){
+                player_dead = true;
+                setTimeout(function(){
+                    surOptions = false;
+                     surCredits = false;
+                     notJumping = true;
+                     ennemyATire = false;
+                     pv_leopard = 2;
+                     leopard_invincible = false;
+                     leopard_mort = false;
+                     pv_arbre = 4;
+                     ennemy_arbre_invincible = false;
+                     ennemy_arbre_a_tire = false;
+                     ennemy_arbre_mort = false;
+                     pv_serpent = 6;
+                     ennemy_serpent_mort = false;
+                     ennemy_serpent_invincible = false;
+                     ennemy_serpent_mort = false;
+                     canSwing = true;
+                     degats_swing = 1;
+                     tirEnJeu = false;
+                     projectileLeftSpeed = -80;
+                     projectileRightSpeed = 80;
+                     flipped = false;
+                     invincible = false;
+                     pv_player = 5;
+                     poids_inventaire = 0;
+                     fireAttackUsed = false;
+                     gameStarted = false;
+                     loot_branche_1_ramassee = false;
+                     ramassage_loot_branche_1 = false;
+                     loot_caillou_1_ramassee = false;
+                     ramassage_loot_caillou_1 = false;
+                     loot_branche_2_ramassee = false;
+                     ramassage_loot_branche_2 = false;
+                     loot_caillou_2_ramassee = false;
+                     ramassage_loot_caillou_2 = false;
+                     loot_branche_3_ramassee = false;
+                     ramassage_loot_branche_3 = false;
+                     loot_caillou_3_ramassee = false;
+                     ramassage_loot_caillou_3 = false;
+                     loot_branche_4_ramassee = false;
+                     ramassage_loot_branche_4 = false;
+                     loot_caillou_4_ramassee = false;
+                     ramassage_loot_caillou_4 = false;
+                     loot_branche_5_ramassee = false;
+                     ramassage_loot_branche_5 = false;
+                     loot_caillou_5_ramassee = false;
+                     ramassage_loot_caillou_5 = false;
+                     message_jouer = false;
+                     message_jouer_present = false;
+                     choix_effectue = false;
+                     en_pause = false;
+                     fireball_tiree = false;
+                     phase_1 = false;
+                     phase_2 = false;
+                     phase_3 = false;
+                     rng_generee = false;
+                     spell_used = false;
+                     whiped = false;
+                     pv_boss = 15;
+                     boss_invincible = false;
+                     texte_ending = false;
+                    player_dead = false;
+                    restart = true;
+                    theme_foret.pause();
+                }, 4000);
+            }
         }
         
         if (keys.up.isDown && notJumping == true){
